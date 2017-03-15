@@ -1,0 +1,21 @@
+<epml:epml xmlns:epml="http://www.epml.de" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.epml.de EPML_2.0.xsd">
+    <epc name="EPC" ServicesName="addServices">
+    	<event Theme="all:B:b1" id="1"><name>send1</name></event>
+        <event Theme="all:B:b3" id="2"><name>send2</name></event>
+        <event Theme="all:F" id="5"><name>add1</name></event>
+        <event Theme="all:G" id="6"><name>add2</name></event>
+        <event Theme="all:I" id="12"><name>answer</name></event>
+        <function ServiceName="addService" id="3"><name>getNum1</name></function>
+        <function ServiceName="addService" id="4"><name>getNum2</name></function>
+        <function ServiceName="addService" id="15"><name>getAnswer</name></function>
+        <and id="9"/>
+        <arc id="7"><flow source="3" target="5"/></arc>
+        <arc id="8"><flow source="4" target="6"/></arc>
+        <arc id="10"><flow source="5" target="9"/></arc>
+        <arc id="11"><flow source="6" target="9"/></arc>
+        <arc id="13"><flow source="9" target="12"/></arc>
+        <arc id="14"><flow source="12" target="15"/></arc>
+        <arc id="16"><flow source="1" target="3"/></arc>
+        <arc id="14"><flow source="2" target="4"/></arc>
+    </epc>
+</epml:epml>

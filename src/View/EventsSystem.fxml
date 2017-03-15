@@ -1,0 +1,33 @@
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.Tab?>
+<?import Controller.EventsManageTab?>
+<?import Controller.ComplexEventTab?>
+<BorderPane fx:controller="Controller.EventsSystem"
+            xmlns:fx="http://javafx.com/fxml" styleClass="background" fx:id="borderPane">
+    <top>
+        <MenuBar fx:id="menu">
+            <menus>
+                <Menu text="File" fx:id="fileMenu">
+                    <items>
+                        <MenuItem text="OpenEPML" fx:id="open" onAction="#onOpenMenuItem" />
+                    </items>
+                </Menu>
+                <Menu text="About" fx:id="aboutMenu">
+
+                </Menu>
+            </menus>
+        </MenuBar>
+    </top>
+    <left>
+        <TabPane fx:id="tabPane" side="LEFT" tabClosingPolicy="UNAVAILABLE">
+            <tabs>
+                <EventsManageTab text="事件管理" fx:id="eventManageTab"/>
+                <ComplexEventTab text="复杂事件" fx:id="complexEventTab"/>
+            </tabs>
+        </TabPane>
+    </left>
+</BorderPane>
