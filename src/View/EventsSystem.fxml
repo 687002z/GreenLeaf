@@ -3,30 +3,51 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.TabPane?>
-<?import javafx.scene.control.Tab?>
 <?import Controller.EventsManageTab?>
 <?import Controller.ComplexEventTab?>
+<?import Controller.TaskManageTab?>
+<?import Controller.ProcessManageTab?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.geometry.Insets?>
 <BorderPane fx:controller="Controller.EventsSystem"
             xmlns:fx="http://javafx.com/fxml" styleClass="background" fx:id="borderPane">
     <top>
-        <MenuBar fx:id="menu">
-            <menus>
-                <Menu text="File" fx:id="fileMenu">
-                    <items>
-                        <MenuItem text="OpenEPML" fx:id="open" onAction="#onOpenMenuItem" />
-                    </items>
-                </Menu>
-                <Menu text="About" fx:id="aboutMenu">
+        <VBox>
+            <MenuBar fx:id="menu">
+                <menus>
+                    <Menu text="File" fx:id="fileMenu">
+                        <items>
+                            <MenuItem text="OpenEPML" fx:id="open" onAction="#onOpenMenuItem" />
+                        </items>
+                    </Menu>
+                    <Menu text="About" fx:id="aboutMenu">
 
-                </Menu>
-            </menus>
-        </MenuBar>
+                    </Menu>
+                </menus>
+            </MenuBar>
+            <HBox spacing="15">
+                <padding><Insets top="15" right="15" bottom="15" left="15"></Insets></padding>
+                <ImageView fitWidth="28" fitHeight="28">
+                    <Image url="@res/imgs/login_info.png"/>
+                </ImageView>
+                <Label fx:id="username"></Label>
+                <Label fx:id="title"></Label>
+            </HBox>
+        </VBox>
+
     </top>
     <left>
-        <TabPane fx:id="tabPane" side="LEFT" tabClosingPolicy="UNAVAILABLE">
+        <TabPane fx:id="tabPane" side="LEFT" tabClosingPolicy="UNAVAILABLE" onMouseClicked="#tabClicked">
             <tabs>
-                <EventsManageTab text="事件管理" fx:id="eventManageTab"/>
+                <ProcessManageTab text="流程管理" fx:id="processManageTab"/>
+                <TaskManageTab text="任务管理" fx:id="taskManageTab"/>
+                <EventsManageTab text="事件管理" fx:id="eventManageTab" />
                 <ComplexEventTab text="复杂事件" fx:id="complexEventTab"/>
+
             </tabs>
         </TabPane>
     </left>

@@ -1,4 +1,4 @@
-package Controller.Xsd;
+package Controller.Parse.Xsd;
 
 import java.util.ArrayList;
 import java.util.Iterator;

@@ -1,38 +1,64 @@
 package Controller;
 
-import Controller.Parse.EPCParser;
-import javafx.event.EventHandler;
+import Dialog.Login;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Side;
-import javafx.scene.Scene;
-import javafx.scene.control.MenuItem;
+import javafx.scene.control.Accordion;
+import javafx.scene.control.Label;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
-import javafx.stage.FileChooser;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 
-import java.awt.event.ActionEvent;
-import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 public class EventsSystem implements Initializable{
     @FXML private BorderPane borderPane;
+    @FXML private TaskManageTab taskManageTab;
+    @FXML private TabPane tabPane;
+    @FXML private Label username;
+    @FXML private Label title;
+    @FXML private Accordion accordion;
     public EventsSystem(){
 
     }
 
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        //当点击任务管理tab的时候
+        Login login= Login.getInstance();
+        while(login.logined==false){
 
+            if(login.show(new Stage(),"logiessage","login")){
+                this.updateInfo();
+            }
+        }
     }
 
     @FXML
     public void onOpenMenuItem(){
 
+    }
+    @FXML
+    protected void tabClicked(Event event){
+        //当点击任务管理tab的时候
+        Login login= Login.getInstance();
+        if(login.logined==false){
+
+            if(login.show(new Stage(),"logiessage","login")){
+                this.updateInfo();
+            }
+        }
+    }
+
+    public void updateInfo(){
+        username.setText(Login.getInstance().getUsername());
+        username.setFont(Font.font("Verdana", FontWeight.BOLD, 15));
+        title.setText("职位："+Login.getInstance().getTitle());
+        title.setFont(Font.font("Verdana", FontWeight.BOLD, 15));
     }
 
 }

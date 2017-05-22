@@ -2,5 +2,5 @@
   <topic xmlns="" name="all:G" type="tns:ComplexType"/>
   <values xmlns="" name="addnum">
     <addnum2 type="int"/>
-</values>
+  </values>
 </schema>

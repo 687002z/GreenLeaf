@@ -1,4 +1,4 @@
-package Controller.Xsd;
+package Controller.Parse.Xsd;
 
 //XSD节点对象类
 public class XSDNode {

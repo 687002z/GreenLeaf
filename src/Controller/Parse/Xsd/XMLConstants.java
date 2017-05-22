@@ -1,4 +1,4 @@
-package Controller.Xsd;
+package Controller.Parse.Xsd;
 
 //静态变量类
 public class XMLConstants {

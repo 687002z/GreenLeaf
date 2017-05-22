@@ -3,5 +3,5 @@
   <values xmlns="" name="getanswer">
   	<addnum1 type="int"/>
     <addnum2 type="int"/>
-</values>
+  </values>
 </schema>
