@@ -41,7 +41,7 @@
 
     </top>
     <left>
-        <TabPane fx:id="tabPane" side="LEFT" tabClosingPolicy="UNAVAILABLE" onMouseClicked="#tabClicked">
+        <TabPane fx:id="tabPane" side="LEFT" tabClosingPolicy="UNAVAILABLE">
             <tabs>
                 <ProcessManageTab text="流程管理" fx:id="processManageTab"/>
                 <TaskManageTab text="任务管理" fx:id="taskManageTab"/>

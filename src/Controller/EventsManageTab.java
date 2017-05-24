@@ -53,7 +53,7 @@ public class EventsManageTab extends Tab{
         this.init();
     }
 
-    private void init(){//初始化函数
+    private void init() {//初始化函数
         TypeNode r=new TypeNode("root");
         root=new TreeItem<ITreeNode>(r);
         topicTree.setRoot(root);

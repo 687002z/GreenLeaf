@@ -11,8 +11,11 @@ public class ConnDB {
     private final String DB_USER = "root";
     private final String DB_PASSWORD = "root";
     private Connection conn = null;
-    
-    public ConnDB(){}
+    private static ConnDB instance = new ConnDB();
+
+    public static ConnDB getInstance(){
+        return instance;
+    }
     private Connection getConn() {
         try {
            // Class.forName(DBDRIVER).newInstance();

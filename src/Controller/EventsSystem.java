@@ -1,7 +1,6 @@
 package Controller;
 
-import Dialog.Login;
-import javafx.event.Event;
+import Model.Login;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Accordion;
@@ -41,17 +40,6 @@ public class EventsSystem implements Initializable{
     @FXML
     public void onOpenMenuItem(){
 
-    }
-    @FXML
-    protected void tabClicked(Event event){
-        //当点击任务管理tab的时候
-        Login login= Login.getInstance();
-        if(login.logined==false){
-
-            if(login.show(new Stage(),"logiessage","login")){
-                this.updateInfo();
-            }
-        }
     }
 
     public void updateInfo(){

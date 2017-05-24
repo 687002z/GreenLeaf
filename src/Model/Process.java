@@ -9,5 +9,6 @@ public class Process {
     private int status;
     private int userid;
     private String func;
+    private ProcessModel pm;
 
 }

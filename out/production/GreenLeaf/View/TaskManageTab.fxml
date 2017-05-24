@@ -28,7 +28,7 @@
                         <TitledPane>
                             <text>任务处理</text>
                             <content>
-                                <TreeView fx:id="taskHandle">
+                                <TreeView fx:id="taskTree">
                                 </TreeView>
                             </content>
                         </TitledPane>

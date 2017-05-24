@@ -8,7 +8,7 @@ public class ProcessModel {
     private String name;
     private String data;
 
-    ProcessModel(int id,String name,String data){
+     public ProcessModel(int id,String name,String data){
         this.id=id;
         this.name=name;
         this.data=data;

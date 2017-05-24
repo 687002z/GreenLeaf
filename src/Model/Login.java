@@ -1,6 +1,7 @@
-package Dialog;
+package Model;
 
 import Controller.Db.ConnDB;
+import Dialog.Dialogs;
 import javafx.stage.Stage;
 
 import java.sql.ResultSet;
@@ -10,12 +11,9 @@ import java.sql.SQLException;
  * Created by SunnyD on 2017/5/10.
  */
 public class Login {
-
+    public static final String ROLE_ADMIN="admin";
     public static Login dialog=new Login();
     public static boolean logined=false;
-
-
-
     private String username;
     private String password;
     private String title;
@@ -33,9 +31,8 @@ public class Login {
     }
 
     private boolean checkLogin(Dialogs.LoginResponse lr){
-        ConnDB conn=new ConnDB();
         String sql = "select title from users where userid = '"+lr.username+"' and "+"password = '"+lr.password+"'";
-        ResultSet rs=conn.executeQuery(sql);
+        ResultSet rs=ConnDB.getInstance().executeQuery(sql);
         try {
             if(rs.next()){
                 String title=rs.getString("title");

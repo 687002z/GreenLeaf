@@ -30,9 +30,6 @@ public class ComplexEventTab extends Tab{
         }
         this.init();
     }
-//    public static Label getInfoLabelInstance(){
-//        return infolabel;
-//    }
 
     private void init() {//初始化函数
         parser=EPCParser.getEPCParserInstance();
