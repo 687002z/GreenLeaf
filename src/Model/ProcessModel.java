@@ -1,9 +1,11 @@
 package Model;
 
+import Model.Tree.ITreeNode;
+
 /**
  * Created by SunnyD on 2017/5/22.
  */
-public class ProcessModel {
+public class ProcessModel implements ITreeNode{
     private int id;
     private String name;
     private String data;
@@ -30,13 +32,19 @@ public class ProcessModel {
         this.id = id;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public void setName(String name) {
         this.name = name;
     }
 
+    @Override
+    public String toString() {
+        return name;
+    }
 
 }

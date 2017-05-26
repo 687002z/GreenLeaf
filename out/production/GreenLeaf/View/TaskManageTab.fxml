@@ -1,15 +1,14 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.control.Label?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.image.Image?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.control.Accordion?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TreeView?>
 <?import javafx.scene.web.WebView?>
+<?import javafx.scene.control.ContextMenu?>
+<?import javafx.scene.control.MenuItem?>
 <fx:root type="javafx.scene.control.Tab" xmlns:fx="http://javafx.com/fxml">
     <VBox spacing="15" fx:id="vbox1">
         <padding><Insets top="15" right="15" bottom="15" left="15"></Insets></padding>
@@ -21,7 +20,7 @@
                         <TitledPane >
                             <text>新建流程</text>
                             <content>
-                                <ListView fx:id="newProcess">
+                                <ListView fx:id="processModelList">
                                 </ListView>
                             </content>
                         </TitledPane>
@@ -29,16 +28,25 @@
                             <text>任务处理</text>
                             <content>
                                 <TreeView fx:id="taskTree">
+                                    <contextMenu>
+                                        <ContextMenu fx:id="contextMenu">
+                                            <items><MenuItem text="刷新" /></items>
+
+                                        </ContextMenu>
+                                    </contextMenu>
                                 </TreeView>
                             </content>
                         </TitledPane>
                     </panes>
                 </Accordion>
             </ScrollPane>
-            <WebView prefWidth="400" prefHeight="580">
+            <ScrollPane fx:id="taskScrollView" prefWidth="400" maxHeight="680" >
 
-            </WebView>
+                <VBox fx:id="taskViewVBox" spacing="5" prefWidth="400" alignment="CENTER">
+                    <padding><Insets top="15" right="5" bottom="5" left="50"></Insets></padding>
+                </VBox>
 
+            </ScrollPane>
         </HBox>
 
     </VBox>

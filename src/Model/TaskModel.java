@@ -14,6 +14,7 @@ public class TaskModel {
 
     public TaskModel(int id,String name,String form,String type,String domins,String role,String topic){
         this.id=id;
+        this.name=name;
         this.form=form;
         this.type=type;
         this.domins=domins;

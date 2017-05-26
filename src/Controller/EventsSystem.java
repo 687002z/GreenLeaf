@@ -34,6 +34,7 @@ public class EventsSystem implements Initializable{
             if(login.show(new Stage(),"logiessage","login")){
                 this.updateInfo();
             }
+            taskManageTab.initTaskList();
         }
     }
 

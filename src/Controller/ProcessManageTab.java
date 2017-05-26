@@ -15,6 +15,7 @@ public class ProcessManageTab extends Tab {
     @FXML private Label username;
     @FXML private Label title;
     @FXML private Accordion accordion;
+
     public ProcessManageTab(){
         FXMLLoader loader=new FXMLLoader(getClass().getResource("/View/ProcessManageTab.fxml"));
         loader.setRoot(this);
@@ -30,6 +31,7 @@ public class ProcessManageTab extends Tab {
     }
 
     public void init(){
+
 
 
     }

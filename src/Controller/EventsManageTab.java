@@ -134,7 +134,6 @@ public class EventsManageTab extends Tab{
 
                 }else if(value instanceof EventNode){
                     clearContent();
-
                 }
             }
         });

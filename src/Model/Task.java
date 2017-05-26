@@ -13,17 +13,16 @@ public class Task implements ITreeNode{
     private int processId;
     private String data;
     private String userId;
-    private String role;
     private int status;
     private TaskModel taskModel;
+    private String name;
 
-    public Task(int id,int modelId,int processId,String data,String userId,String role,int status){
+    public Task(int id,int modelId,int processId,String data,String userId,int status){
         this.id=id;
         this.modelId=modelId;
         this.processId=processId;
         this.data=data;
         this.userId=userId;
-        this.role=role;
         this.status=status;
     }
 
@@ -75,14 +74,6 @@ public class Task implements ITreeNode{
         this.userId = userId;
     }
 
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
     public int getStatus() {
         return status;
     }
@@ -93,11 +84,16 @@ public class Task implements ITreeNode{
 
     @Override
     public String getName() {
-        return null;
+        return name;
     }
 
     @Override
     public void setName(String name) {
+        this.name=name;
+    }
 
+    @Override
+    public String toString() {
+        return this.name;
     }
 }
