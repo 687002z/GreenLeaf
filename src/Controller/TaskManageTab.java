@@ -7,6 +7,7 @@ import Model.Task;
 import Model.TaskModel;
 import Model.Tree.ITreeNode;
 import Model.Tree.TypeNode;
+import Dialog.Dialogs;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -16,8 +17,13 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
+import javafx.stage.Stage;
+
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -33,6 +39,7 @@ public class TaskManageTab extends Tab {
     @FXML TreeView<ITreeNode> taskTree;
     @FXML ContextMenu contextMenu;
     @FXML ScrollPane taskScrollView;
+    @FXML WebView taskWebView;
     @FXML VBox taskViewVBox;
     private HashMap<Integer,Task> taskMap;
     private HashMap<Integer,ProcessModel> processModelMap;
@@ -144,6 +151,9 @@ public class TaskManageTab extends Tab {
         });
     }
 
+    /*
+        任务表单内容的生成
+     */
     private void generateTaskContend (Task p) {
         String[] coms=p.getData().split(";");
         for(String com: coms){
@@ -162,7 +172,7 @@ public class TaskManageTab extends Tab {
                     hb.getChildren().add(label);
                     TextField tf =new TextField();
                     hb.getChildren().add(tf);
-                    if(values[2]=="r"){
+                    if(values[2].equals("r")&&values.length<=4){
                         tf.setEditable(false);
                         tf.setText(values[3]);
                     }
@@ -173,6 +183,11 @@ public class TaskManageTab extends Tab {
 
                     DatePicker dp=new DatePicker();
                     hb.getChildren().add(dp);
+                    if(values[2].equals("r")&&values.length<=4){
+                        dp.setEditable(false);
+                        String date[]=values[3].split("-");
+                        dp.setValue(LocalDate.of(Integer.valueOf(date[0]),Integer.valueOf(date[1]),Integer.valueOf(date[2])));
+                    }
                     dp.setUserData(values[0]);
                 }
                 taskViewVBox.getChildren().add(hb);
@@ -184,7 +199,7 @@ public class TaskManageTab extends Tab {
     }
 
     /*
-    *初始化显示流程模型列表，从数据库中读取数据
+    *   初始化显示流程模型列表，从数据库中读取数据
      */
 
     public void initProcessModelList(){
@@ -205,13 +220,66 @@ public class TaskManageTab extends Tab {
         for(ProcessModel p:processModelMap.values()){
             olist.add(p);
         }
+        this.addProcessModelListenner();
+    }
+
+    private void addProcessModelListenner(){
+        processModelList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<ITreeNode>() {
+            @Override
+            public void changed(ObservableValue<? extends ITreeNode> observable, ITreeNode oldValue, ITreeNode newValue) {
+                System.out.println(newValue.getName());
+                WebEngine we=taskWebView.getEngine();
+                we.load("http://localhost:8080/GraphEditor/index.html");
+                we.executeScript("");
+            }
+        });
+
+    }
+    /*
+        点击流程模型列表出发的回调函数
+     */
+    @FXML
+    private void onClickedProcessListView(MouseEvent e){
+        if(e.getClickCount()==2){
+            Dialogs.getInstance().showMessageDialog(new Stage(),e.getTarget().toString(),"test");
+        }
 
     }
     /*
     * 存储任务编辑后的信息并发送信息到到主题,任务信息需要从@Value taskDataMap 与控件中的value进行合并。
     * */
     private void saveAndSendMessage(){
+        for(int i=0;i<taskViewVBox.getChildren().size()-1;i++){//存储控件的编辑信息
+            HBox hb=(HBox)taskViewVBox.getChildren().get(i);
+            for(int j=0;j<hb.getChildren().size();j++){
+                if(hb.getChildren().get(j).getUserData()!=null&&taskDataMap.get(hb.getChildren().get(j).getUserData()).size()<4){
+                    if(hb.getChildren().get(j) instanceof TextField){
+                        TextField tf=(TextField) hb.getChildren().get(j);
+                        taskDataMap.get(tf.getUserData()).add(tf.getText());
+                    }else if(hb.getChildren().get(j) instanceof DatePicker){
+                        DatePicker dp=(DatePicker)hb.getChildren().get(j);
+                        taskDataMap.get(dp.getUserData()).add(dp.getValue().toString());
+                    }
+                }
+            }
+        }
 
+    }
+    /*
+        点击 新建流程 标签触发的回调函数，会显示webView
+     */
+    @FXML
+    void showWebView(){
+        taskWebView.setVisible(true);
+        taskScrollView.setVisible(false);
+    }
+    /*
+        点击 任务处理 标签触发的回调函数，会显示任务信息内容
+     */
+    @FXML
+    void showTaskScroll(){
+        taskWebView.setVisible(false);
+        taskScrollView.setVisible(true);
     }
 
 }

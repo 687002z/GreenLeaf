@@ -9,6 +9,8 @@
 <?import javafx.scene.web.WebView?>
 <?import javafx.scene.control.ContextMenu?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.chart.StackedAreaChart?>
+<?import javafx.scene.layout.StackPane?>
 <fx:root type="javafx.scene.control.Tab" xmlns:fx="http://javafx.com/fxml">
     <VBox spacing="15" fx:id="vbox1">
         <padding><Insets top="15" right="15" bottom="15" left="15"></Insets></padding>
@@ -17,14 +19,14 @@
             <ScrollPane prefWidth="200" prefHeight="580">
                 <Accordion prefWidth="200">
                     <panes>
-                        <TitledPane >
+                        <TitledPane onMouseClicked="#showWebView">
                             <text>新建流程</text>
                             <content>
-                                <ListView fx:id="processModelList">
+                                <ListView fx:id="processModelList" onMouseClicked="#onClickedProcessListView">
                                 </ListView>
                             </content>
                         </TitledPane>
-                        <TitledPane>
+                        <TitledPane onMouseClicked="#showTaskScroll">
                             <text>任务处理</text>
                             <content>
                                 <TreeView fx:id="taskTree">
@@ -40,13 +42,19 @@
                     </panes>
                 </Accordion>
             </ScrollPane>
-            <ScrollPane fx:id="taskScrollView" prefWidth="400" maxHeight="680" >
+            <StackPane>
+                <WebView fx:id="taskWebView" prefWidth="500" prefHeight="680">
 
-                <VBox fx:id="taskViewVBox" spacing="5" prefWidth="400" alignment="CENTER">
-                    <padding><Insets top="15" right="5" bottom="5" left="50"></Insets></padding>
-                </VBox>
+                </WebView>
+                <ScrollPane fx:id="taskScrollView" prefWidth="400" maxHeight="680" >
 
-            </ScrollPane>
+                    <VBox fx:id="taskViewVBox" spacing="5" prefWidth="400" alignment="CENTER">
+                        <padding><Insets top="15" right="5" bottom="5" left="50"></Insets></padding>
+                    </VBox>
+
+                </ScrollPane>
+            </StackPane>
+
         </HBox>
 
     </VBox>
