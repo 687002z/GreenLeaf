@@ -36,7 +36,7 @@ public class Dialogs {
 
     public enum Response {
         NO, YES, CANCEL
-    };
+    }
     public class LoginResponse {
         public String username;
         public String password;
@@ -214,5 +214,48 @@ public class Dialogs {
         return lr;
     }
 
+    public String showNewProcessDialog(Stage owner){
+        String processName="";
+
+        VBox vb = new VBox();
+        Scene scene = new Scene(vb);
+        final Dialog dial = new Dialog("新建流程", owner, scene);
+        vb.setPadding(new Insets(10, 10, 10, 10));
+        vb.setSpacing(10);
+
+        HBox name = new HBox();
+        name.setSpacing(5);
+        Label label1 =new Label("流程名：");
+        TextField processNameTf= new TextField();
+        name.getChildren().addAll(label1,processNameTf);
+        vb.getChildren().add(name);
+
+        Button submit = new Button("提交");
+        submit.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent e) {
+                dial.close();
+                lr.username=processNameTf.getText();
+            }
+        });
+        Button noButton = new Button("取消");
+        noButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent e) {
+                dial.close();
+            }
+        });
+        HBox buttons = new HBox();
+        buttons.setAlignment(Pos.CENTER);
+        buttons.setSpacing(10);
+        buttons.getChildren().addAll(submit, noButton);
+
+        BorderPane bp = new BorderPane();
+        bp.setCenter(buttons);
+        vb.getChildren().add(bp);
+        dial.showDialog();
+        return processName;
+
+    }
 
 }

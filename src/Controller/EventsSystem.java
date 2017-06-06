@@ -24,7 +24,9 @@ public class EventsSystem implements Initializable{
     public EventsSystem(){
 
     }
-
+    /*
+    *初始化
+    */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         //当点击任务管理tab的时候

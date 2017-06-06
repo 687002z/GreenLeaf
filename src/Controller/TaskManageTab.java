@@ -241,7 +241,7 @@ public class TaskManageTab extends Tab {
     @FXML
     private void onClickedProcessListView(MouseEvent e){
         if(e.getClickCount()==2){
-            Dialogs.getInstance().showMessageDialog(new Stage(),e.getTarget().toString(),"test");
+            Dialogs.getInstance().showNewProcessDialog(new Stage());
         }
 
     }
@@ -249,19 +249,28 @@ public class TaskManageTab extends Tab {
     * 存储任务编辑后的信息并发送信息到到主题,任务信息需要从@Value taskDataMap 与控件中的value进行合并。
     * */
     private void saveAndSendMessage(){
-        for(int i=0;i<taskViewVBox.getChildren().size()-1;i++){//存储控件的编辑信息
-            HBox hb=(HBox)taskViewVBox.getChildren().get(i);
-            for(int j=0;j<hb.getChildren().size();j++){
-                if(hb.getChildren().get(j).getUserData()!=null&&taskDataMap.get(hb.getChildren().get(j).getUserData()).size()<4){
-                    if(hb.getChildren().get(j) instanceof TextField){
-                        TextField tf=(TextField) hb.getChildren().get(j);
-                        taskDataMap.get(tf.getUserData()).add(tf.getText());
-                    }else if(hb.getChildren().get(j) instanceof DatePicker){
-                        DatePicker dp=(DatePicker)hb.getChildren().get(j);
-                        taskDataMap.get(dp.getUserData()).add(dp.getValue().toString());
+        try{
+            for(int i=0;i<taskViewVBox.getChildren().size()-1;i++){//存储控件的编辑信息
+                HBox hb=(HBox)taskViewVBox.getChildren().get(i);
+                for(int j=0;j<hb.getChildren().size();j++){
+                    if(hb.getChildren().get(j).getUserData()!=null&&taskDataMap.get(hb.getChildren().get(j).getUserData()).size()<3){
+                        if(hb.getChildren().get(j) instanceof TextField){
+                            TextField tf=(TextField) hb.getChildren().get(j);
+                            taskDataMap.get(tf.getUserData()).add(tf.getText());
+                        }else if(hb.getChildren().get(j) instanceof DatePicker){
+                            DatePicker dp=(DatePicker)hb.getChildren().get(j);
+                            taskDataMap.get(dp.getUserData()).add(dp.getValue().toString());
+                        }
                     }
                 }
             }
+        }catch (Exception e) {
+            e.printStackTrace();
+            Dialogs.getInstance().showMessageDialog(new Stage(),"填写内容出错！","错误");
+        }
+
+        for(String s:taskDataMap.keySet()){
+            System.out.println(s+":"+taskDataMap.get(s));
         }
 
     }
