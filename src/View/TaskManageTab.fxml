@@ -6,11 +6,11 @@
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TreeView?>
-<?import javafx.scene.web.WebView?>
 <?import javafx.scene.control.ContextMenu?>
 <?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.chart.StackedAreaChart?>
 <?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.control.Label?>
 <fx:root type="javafx.scene.control.Tab" xmlns:fx="http://javafx.com/fxml">
     <VBox spacing="15" fx:id="vbox1">
         <padding><Insets top="15" right="15" bottom="15" left="15"></Insets></padding>
@@ -19,7 +19,7 @@
             <ScrollPane prefWidth="200" prefHeight="580">
                 <Accordion prefWidth="200">
                     <panes>
-                        <TitledPane onMouseClicked="#showWebView">
+                        <TitledPane onMouseClicked="#showProcessScroll">
                             <text>新建流程</text>
                             <content>
                                 <ListView fx:id="processModelList" onMouseClicked="#onClickedProcessListView">
@@ -32,20 +32,36 @@
                                 <TreeView fx:id="taskTree">
                                     <contextMenu>
                                         <ContextMenu fx:id="contextMenu">
-                                            <items><MenuItem text="刷新" /></items>
+                                            <items><MenuItem text="刷新" onAction="#refreshTree"/></items>
 
                                         </ContextMenu>
                                     </contextMenu>
                                 </TreeView>
+
                             </content>
                         </TitledPane>
                     </panes>
                 </Accordion>
             </ScrollPane>
             <StackPane>
-                <WebView fx:id="taskWebView" prefWidth="500" prefHeight="680">
+                <VBox>
+                    <padding><Insets top="5" right="5" bottom="5" left="5"></Insets></padding>
+                    <HBox>
+                        <padding><Insets top="5" right="30" bottom="5" left="5"></Insets></padding>
+                        <Label fx:id="processModelNameLabel"></Label>
+                        <Label fx:id="processModelIdLabel"></Label>
+                    </HBox>
+                    <ScrollPane prefWidth="500" prefHeight="680">
+                        <StackPane fx:id="processModelStackPane">
+                            <ImageView fx:id="processModelImageView" >
 
-                </WebView>
+                            </ImageView>
+                        </StackPane>
+
+                    </ScrollPane>
+                </VBox>
+
+
                 <ScrollPane fx:id="taskScrollView" prefWidth="400" maxHeight="680" >
 
                     <VBox fx:id="taskViewVBox" spacing="5" prefWidth="400" alignment="CENTER">

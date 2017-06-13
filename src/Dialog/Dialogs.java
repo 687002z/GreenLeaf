@@ -29,6 +29,7 @@ import javafx.stage.StageStyle;
 public class Dialogs {
     private static Dialogs instance=new Dialogs();
     private LoginResponse lr;
+    private String processName;
 
     public static Dialogs getInstance(){
         return instance;
@@ -215,7 +216,7 @@ public class Dialogs {
     }
 
     public String showNewProcessDialog(Stage owner){
-        String processName="";
+        processName=null;
 
         VBox vb = new VBox();
         Scene scene = new Scene(vb);
@@ -235,7 +236,7 @@ public class Dialogs {
             @Override
             public void handle(ActionEvent e) {
                 dial.close();
-                lr.username=processNameTf.getText();
+                processName=processNameTf.getText();
             }
         });
         Button noButton = new Button("取消");

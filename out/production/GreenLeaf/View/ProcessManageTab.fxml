@@ -9,6 +9,9 @@
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TreeView?>
+<?import javafx.scene.control.ContextMenu?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.layout.StackPane?>
 <fx:root type="javafx.scene.control.Tab" xmlns:fx="http://javafx.com/fxml">
     <VBox spacing="15" fx:id="vbox1">
         <padding><Insets top="15" right="15" bottom="15" left="15"></Insets></padding>
@@ -16,26 +19,46 @@
             <ScrollPane prefWidth="200" prefHeight="580">
                 <Accordion prefWidth="200">
                     <panes>
-                        <TitledPane >
+                        <TitledPane onMouseClicked="#showRoleManageView">
                             <text>角色管理</text>
                             <content>
-                                <ListView fx:id="newProcess">
-                                </ListView>
+                                <TreeView fx:id="newProcess">
+                                </TreeView>
                             </content>
                         </TitledPane>
-                        <TitledPane>
+                        <TitledPane onMouseClicked="#showProcessView">
                             <text>流程实例</text>
                             <content>
-                                <TreeView fx:id="taskHandle">
-                                </TreeView>
+                                <ListView fx:id="processListView">
+                                    <contextMenu>
+                                        <ContextMenu fx:id="contextMenu">
+                                            <items><MenuItem text="刷新" onAction="#refreshList"/></items>
+                                        </ContextMenu>
+                                    </contextMenu>
+                                </ListView>
                             </content>
                         </TitledPane>
                     </panes>
                 </Accordion>
             </ScrollPane>
+            <StackPane>
+                <VBox fx:id="processMainVBox">
+                    <padding><Insets top="5" right="5" bottom="5" left="5"></Insets></padding>
+                    <HBox>
+                    </HBox>
+                    <ScrollPane prefWidth="500" prefHeight="680">
+                        <StackPane fx:id="processStackPane">
+                            <ImageView fx:id="processImageView" >
 
+                            </ImageView>
+                        </StackPane>
+
+                    </ScrollPane>
+                </VBox>
+
+                <ScrollPane fx:id="roleScrollView" prefWidth="500" maxHeight="680" >
+                </ScrollPane>
+            </StackPane>
         </HBox>
-
     </VBox>
-
 </fx:root>

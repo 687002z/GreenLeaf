@@ -46,7 +46,6 @@
                 <ProcessManageTab text="流程管理" fx:id="processManageTab"/>
                 <TaskManageTab text="任务管理" fx:id="taskManageTab"/>
                 <EventsManageTab text="事件管理" fx:id="eventManageTab" />
-                <ComplexEventTab text="复杂事件" fx:id="complexEventTab"/>
 
             </tabs>
         </TabPane>

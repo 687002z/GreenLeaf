@@ -1,10 +1,9 @@
 package Controller;
 
 import Controller.Db.ConnDB;
-import Model.Login;
-import Model.ProcessModel;
-import Model.Task;
-import Model.TaskModel;
+import Controller.Parse.BufferedImageTranscoder;
+import Model.*;
+import Model.Process;
 import Model.Tree.ITreeNode;
 import Model.Tree.TypeNode;
 import Dialog.Dialogs;
@@ -12,18 +11,22 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
+import javafx.scene.image.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.web.WebEngine;
-import javafx.scene.web.WebView;
 import javafx.stage.Stage;
+import org.apache.batik.transcoder.TranscoderException;
+import org.apache.batik.transcoder.TranscoderInput;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -39,13 +42,20 @@ public class TaskManageTab extends Tab {
     @FXML TreeView<ITreeNode> taskTree;
     @FXML ContextMenu contextMenu;
     @FXML ScrollPane taskScrollView;
-    @FXML WebView taskWebView;
     @FXML VBox taskViewVBox;
+    @FXML ImageView processModelImageView;
+    @FXML StackPane processModelStackPane;
+    @FXML Label processModelNameLabel;
+    @FXML Label processModelIdLabel;
     private HashMap<Integer,Task> taskMap;
-    private HashMap<Integer,ProcessModel> processModelMap;
+    public static HashMap<Integer,ProcessModel> processModelMap;
     private HashMap<String, ArrayList<String>> taskDataMap;
+    private ProcessModel selectedProcessModelNode;
+    private ImageView test;
+    private BufferedImageTranscoder trans;
 
     public TaskManageTab(){
+
         FXMLLoader loader=new FXMLLoader(getClass().getResource("/View/TaskManageTab.fxml"));
         loader.setRoot(this);
 
@@ -62,6 +72,9 @@ public class TaskManageTab extends Tab {
         taskMap=new HashMap<>();
         processModelMap=new HashMap<>();
         taskDataMap=new HashMap<String, ArrayList<String>>();
+
+        trans = new BufferedImageTranscoder();
+
         this.initProcessModelList();
 
     }
@@ -207,7 +220,8 @@ public class TaskManageTab extends Tab {
         ResultSet res=ConnDB.getInstance().executeQuery(sql);
         try {
             while(res.next()){
-                ProcessModel p=new ProcessModel(res.getInt("ProcessModelId"),res.getString("Name"),res.getString("ModelData"));
+                ProcessModel p=new ProcessModel(res.getInt("ProcessModelId"),res.getString("Name"),
+                        res.getString("ModelData"),res.getString("GraphData"));
                 processModelMap.put(p.getId(),p);
             }
         } catch (SQLException e) {
@@ -228,9 +242,27 @@ public class TaskManageTab extends Tab {
             @Override
             public void changed(ObservableValue<? extends ITreeNode> observable, ITreeNode oldValue, ITreeNode newValue) {
                 System.out.println(newValue.getName());
-                WebEngine we=taskWebView.getEngine();
-                we.load("http://localhost:8080/GraphEditor/index.html");
-                we.executeScript("");
+                selectedProcessModelNode = (ProcessModel) newValue;
+
+                processModelNameLabel.setText("进程模型名称:"+newValue.getName());
+                processModelIdLabel.setText("模型编号:"+((ProcessModel) newValue).getId());
+
+                // file may be an InputStream.
+                // Consult Batik's documentation for more possibilities!
+                TranscoderInput transIn = new TranscoderInput(new ByteArrayInputStream(((ProcessModel) newValue).getGraphData().getBytes()));
+
+                try {
+                    trans.transcode(transIn, null);
+
+                    // Use WritableImage if you want to further modify the image (by using a PixelWriter)
+                    Image img = SwingFXUtils.toFXImage(trans.getBufferedImage(), null);
+
+                    processModelImageView.setImage(img);
+
+                } catch (TranscoderException e) {
+                    e.printStackTrace();
+                }
+
             }
         });
 
@@ -241,7 +273,16 @@ public class TaskManageTab extends Tab {
     @FXML
     private void onClickedProcessListView(MouseEvent e){
         if(e.getClickCount()==2){
-            Dialogs.getInstance().showNewProcessDialog(new Stage());
+            String name=Dialogs.getInstance().showNewProcessDialog(new Stage());
+            System.out.println(selectedProcessModelNode.toString());
+            String id=null;
+            if(name!=null){
+                id=this.createProcess(name);
+            }
+            if(id!=null){
+                this.createTask();
+            }
+
         }
 
     }
@@ -278,8 +319,8 @@ public class TaskManageTab extends Tab {
         点击 新建流程 标签触发的回调函数，会显示webView
      */
     @FXML
-    void showWebView(){
-        taskWebView.setVisible(true);
+    void showProcessScroll(){
+        processModelStackPane.setVisible(true);
         taskScrollView.setVisible(false);
     }
     /*
@@ -287,8 +328,59 @@ public class TaskManageTab extends Tab {
      */
     @FXML
     void showTaskScroll(){
-        taskWebView.setVisible(false);
+        processModelStackPane.setVisible(false);
         taskScrollView.setVisible(true);
     }
+    /*
+    * 从流程模型表中选择需要创建的流程模型，创建流程实例，写入数据库
+     */
+    private String createProcess(String name){
 
+        String sql="insert into process(Name,ModelId,Status,UserId,Func) values ('"+name+"','"+selectedProcessModelNode.getId()+"','"
+                +1+"','"+Login.getInstance().getUsername()+"','"+1+"')";//插入流程实例记录到数据库中
+        ConnDB.getInstance().executeUpdate(sql);
+        String sql2="SELECT max(ProcessId) FROM process";
+        String id=null;
+        ResultSet res = ConnDB.getInstance().executeQuery(sql2);
+        try{
+            while(res.next()){
+                id=res.getString(1);
+
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return id;
+    }
+    /*
+    *创建任务实例
+    *需要获取职称下的所有用户并分发任务
+     */
+    private void createTask(){
+
+
+    }
+    /*
+    *发送起始事件
+     */
+    private void sendStartEvent(){
+
+    }
+    /*
+    *开启复杂事件计算服务
+     */
+    private void startComplexEventService(){
+
+    }
+    /*
+    *右键菜单的刷新回调函数
+     */
+    @FXML
+    public void refreshTree(ActionEvent e){
+        taskTree.refresh();
+    }
+
+    public static HashMap<Integer, ProcessModel> getProcessModelMap() {
+        return processModelMap;
+    }
 }

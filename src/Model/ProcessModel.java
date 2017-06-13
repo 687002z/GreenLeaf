@@ -8,20 +8,30 @@ import Model.Tree.ITreeNode;
 public class ProcessModel implements ITreeNode{
     private int id;
     private String name;
-    private String data;
+    private String modelData;
+    private String graphData;
 
-     public ProcessModel(int id,String name,String data){
-        this.id=id;
-        this.name=name;
-        this.data=data;
+     public ProcessModel(int id,String name,String modelData,String graphData){
+         this.id=id;
+         this.name=name;
+         this.modelData=modelData;
+         this.graphData=graphData;
     }
 
-    public String getData() {
-        return data;
+    public String getModelData() {
+        return modelData;
     }
 
-    public void setData(String data) {
-        this.data = data;
+    public void setModelData(String modelData) {
+        this.modelData = modelData;
+    }
+
+    public String getGraphData() {
+        return graphData;
+    }
+
+    public void setGraphData(String graphData) {
+        this.graphData = graphData;
     }
 
     public int getId() {

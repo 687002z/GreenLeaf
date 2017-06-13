@@ -17,6 +17,7 @@ import java.util.ResourceBundle;
 public class EventsSystem implements Initializable{
     @FXML private BorderPane borderPane;
     @FXML private TaskManageTab taskManageTab;
+    @FXML ProcessManageTab processManageTab;
     @FXML private TabPane tabPane;
     @FXML private Label username;
     @FXML private Label title;
@@ -37,6 +38,7 @@ public class EventsSystem implements Initializable{
                 this.updateInfo();
             }
             taskManageTab.initTaskList();
+            processManageTab.initProcessList();
         }
     }
 

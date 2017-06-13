@@ -1,6 +1,6 @@
 package Controller.Push;
 
-import Controller.ComplexCalculate;
+import Controller.ComplexEventCal;
 import Controller.Parse.Node.ComplexNode;
 import Controller.Parse.Node.Event;
 
@@ -11,13 +11,13 @@ import javax.jws.WebService;
 public class NotificationProcessImpl implements INotificationProcess{
 	private int counter = 0;
 	private ComplexNode cmpNode=null;
-	private ComplexCalculate calculate=null;
+	private ComplexEventCal calculate=null;
 	private Event event;
 	
 	public NotificationProcessImpl() {
 		System.out.println("constructor");
 	}
-	public NotificationProcessImpl(ComplexNode cmpNode,ComplexCalculate calculate,Event event) {
+	public NotificationProcessImpl(ComplexNode cmpNode, ComplexEventCal calculate, Event event) {
 		// TODO Auto-generated constructor stub
 		this.cmpNode=cmpNode;
 		this.calculate=calculate;

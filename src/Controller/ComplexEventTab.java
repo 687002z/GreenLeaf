@@ -32,12 +32,10 @@ public class ComplexEventTab extends Tab{
     }
 
     private void init() {//初始化函数
-        parser=EPCParser.getEPCParserInstance();
 
     }
     @FXML
     public void onOpenEPMLAction(){//读取文件并解析节点
-        parser.setInfoLabel(infolabel);//传入infolabel实例
 
         Window window=infolabel.getScene().getWindow();
         FileChooser openfile=new FileChooser();
@@ -48,11 +46,6 @@ public class ComplexEventTab extends Tab{
         openfile.setTitle("请打开EPML文件");
         File file=openfile.showOpenDialog(window);
         if(file!=null){
-            EPCParser.getEPCParserInstance().read(file);
         }
-    }
-    @FXML
-    public void onParseAction(){
-        EPCParser.getEPCParserInstance().publishAndSubscribe();
     }
 }
