@@ -1,10 +1,10 @@
-package Controller;
+package Controller.Tab;
 
 import Controller.Db.ConnDB;
 import Controller.Parse.BufferedImageTranscoder;
 import Controller.Parse.EPCParser;
-import Model.Process;
-import Model.Tree.INode;
+import Model.Node.Process;
+import Model.Node.Tree.INode;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;

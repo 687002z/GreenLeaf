@@ -1,4 +1,4 @@
-package Model.Tree;
+package Model.Node.Tree;
 
 public interface INode {
 	public String getName();

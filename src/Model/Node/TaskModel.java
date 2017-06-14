@@ -1,4 +1,4 @@
-package Model;
+package Model.Node;
 
 /**
  * Created by SunnyD on 2017/5/22.

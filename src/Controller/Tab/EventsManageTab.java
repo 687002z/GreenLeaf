@@ -1,12 +1,12 @@
-package Controller;
+package Controller.Tab;
 
 import Controller.Parse.Xsd.XSDNode;
 import Controller.Parse.Xsd.XSDReader;
 import Controller.Db.ConnDB;
-import Model.Tree.EventNode;
-import Model.Tree.INode;
-import Model.Tree.TopicNode;
-import Model.Tree.TypeNode;
+import Model.Node.Tree.EventNode;
+import Model.Node.Tree.INode;
+import Model.Node.Tree.TopicNode;
+import Model.Node.Tree.TypeNode;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;

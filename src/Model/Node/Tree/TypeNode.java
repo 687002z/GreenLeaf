@@ -1,4 +1,4 @@
-package Model.Tree;
+package Model.Node.Tree;
 
 public class TypeNode implements INode {
 	private String name;

@@ -3,10 +3,10 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.TabPane?>
-<?import Controller.EventsManageTab?>
-<?import Controller.ComplexEventTab?>
-<?import Controller.TaskManageTab?>
-<?import Controller.ProcessManageTab?>
+<?import Controller.Tab.EventsManageTab?>
+<?import Controller.Tab.ComplexEventTab?>
+<?import Controller.Tab.TaskManageTab?>
+<?import Controller.Tab.ProcessManageTab?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.image.ImageView?>

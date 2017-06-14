@@ -1,4 +1,4 @@
-package Controller;
+package Model.Node;
 
 import wsn.wsnclient.command.SendWSNCommand;
 import wsn.wsnclient.command.SendWSNCommandWSSyn;

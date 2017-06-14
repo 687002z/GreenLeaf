@@ -1,4 +1,4 @@
-package Controller;
+package Controller.Tab;
 
 import Controller.Parse.EPCParser;
 import javafx.fxml.FXML;

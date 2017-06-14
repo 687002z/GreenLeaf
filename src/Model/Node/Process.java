@@ -1,7 +1,7 @@
-package Model;
+package Model.Node;
 
 import Controller.Parse.EPCParser;
-import Model.Tree.INode;
+import Model.Node.Tree.INode;
 
 /**
  * Created by SunnyD on 2017/5/22.

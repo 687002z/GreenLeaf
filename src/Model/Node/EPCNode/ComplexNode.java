@@ -1,8 +1,4 @@
-package Controller.Parse.Node;
-
-import Controller.Parse.EPCParser;
-
-import java.util.ArrayList;
+package Model.Node.EPCNode;
 
 /**
  * Created by SunnyD on 2016/11/3.

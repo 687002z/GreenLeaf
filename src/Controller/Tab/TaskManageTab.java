@@ -1,12 +1,15 @@
-package Controller;
+package Controller.Tab;
 
 import Controller.Db.ConnDB;
 import Controller.Parse.BufferedImageTranscoder;
 import Model.*;
-import Model.Process;
-import Model.Tree.INode;
-import Model.Tree.TypeNode;
-import Dialog.Dialogs;
+import Model.Node.Process;
+import Model.Node.ProcessModel;
+import Model.Node.Task;
+import Model.Node.TaskModel;
+import Model.Node.Tree.INode;
+import Model.Node.Tree.TypeNode;
+import View.Dialog.Dialogs;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;

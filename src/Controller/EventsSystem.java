@@ -1,5 +1,7 @@
 package Controller;
 
+import Controller.Tab.ProcessManageTab;
+import Controller.Tab.TaskManageTab;
 import Model.Login;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
