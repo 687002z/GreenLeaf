@@ -61,7 +61,6 @@
                     </ScrollPane>
                 </VBox>
 
-
                 <ScrollPane fx:id="taskScrollView" prefWidth="400" maxHeight="680" >
 
                     <VBox fx:id="taskViewVBox" spacing="5" prefWidth="400" alignment="CENTER">

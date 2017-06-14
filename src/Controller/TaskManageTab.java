@@ -4,7 +4,7 @@ import Controller.Db.ConnDB;
 import Controller.Parse.BufferedImageTranscoder;
 import Model.*;
 import Model.Process;
-import Model.Tree.ITreeNode;
+import Model.Tree.INode;
 import Model.Tree.TypeNode;
 import Dialog.Dialogs;
 import javafx.beans.value.ChangeListener;
@@ -38,8 +38,8 @@ import java.util.HashMap;
  * Created by SunnyD on 2017/5/3.
  */
 public class TaskManageTab extends Tab {
-    @FXML ListView<ITreeNode> processModelList;
-    @FXML TreeView<ITreeNode> taskTree;
+    @FXML ListView<INode> processModelList;
+    @FXML TreeView<INode> taskTree;
     @FXML ContextMenu contextMenu;
     @FXML ScrollPane taskScrollView;
     @FXML VBox taskViewVBox;
@@ -104,12 +104,12 @@ public class TaskManageTab extends Tab {
             e.printStackTrace();
         }
         //init TreeTypeNode
-        TreeItem<ITreeNode> root=new TreeItem<ITreeNode>(new TypeNode("root"));
+        TreeItem<INode> root=new TreeItem<INode>(new TypeNode("root"));
         root.setExpanded(true);
         taskTree.setRoot(root);
-        TreeItem<ITreeNode> finished=new TreeItem<ITreeNode>(new TypeNode("已完成任务"));
-        TreeItem<ITreeNode> running=new TreeItem<ITreeNode>(new TypeNode("待处理任务"));
-        TreeItem<ITreeNode> wait=new TreeItem<ITreeNode>(new TypeNode("未分配任务"));
+        TreeItem<INode> finished=new TreeItem<INode>(new TypeNode("已完成任务"));
+        TreeItem<INode> running=new TreeItem<INode>(new TypeNode("待处理任务"));
+        TreeItem<INode> wait=new TreeItem<INode>(new TypeNode("未分配任务"));
         root.getChildren().add(finished);
         root.getChildren().add(running);
         root.getChildren().add(wait);
@@ -132,9 +132,9 @@ public class TaskManageTab extends Tab {
         添加任务管理树的监听器
      */
     private void addTaskTreeListenner(){
-        taskTree.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<TreeItem<ITreeNode>>() {
+        taskTree.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<TreeItem<INode>>() {
             @Override
-            public void changed(ObservableValue<? extends TreeItem<ITreeNode>> observable, TreeItem<ITreeNode> oldValue, TreeItem<ITreeNode> newValue) {
+            public void changed(ObservableValue<? extends TreeItem<INode>> observable, TreeItem<INode> oldValue, TreeItem<INode> newValue) {
                 taskDataMap.clear();
 
                 taskViewVBox.getChildren().clear();
@@ -227,7 +227,7 @@ public class TaskManageTab extends Tab {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        ObservableList<ITreeNode> olist= FXCollections.observableArrayList();
+        ObservableList<INode> olist= FXCollections.observableArrayList();
 
         processModelList.setItems(olist);
 
@@ -238,9 +238,9 @@ public class TaskManageTab extends Tab {
     }
 
     private void addProcessModelListenner(){
-        processModelList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<ITreeNode>() {
+        processModelList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<INode>() {
             @Override
-            public void changed(ObservableValue<? extends ITreeNode> observable, ITreeNode oldValue, ITreeNode newValue) {
+            public void changed(ObservableValue<? extends INode> observable, INode oldValue, INode newValue) {
                 System.out.println(newValue.getName());
                 selectedProcessModelNode = (ProcessModel) newValue;
 
@@ -275,12 +275,13 @@ public class TaskManageTab extends Tab {
         if(e.getClickCount()==2){
             String name=Dialogs.getInstance().showNewProcessDialog(new Stage());
             System.out.println(selectedProcessModelNode.toString());
-            String id=null;
+            int id=-1;
             if(name!=null){
                 id=this.createProcess(name);
+
             }
-            if(id!=null){
-                this.createTask();
+            if(id>=0){
+                this.createTask(id);
             }
 
         }
@@ -334,18 +335,17 @@ public class TaskManageTab extends Tab {
     /*
     * 从流程模型表中选择需要创建的流程模型，创建流程实例，写入数据库
      */
-    private String createProcess(String name){
+    private Integer createProcess(String name){
 
         String sql="insert into process(Name,ModelId,Status,UserId,Func) values ('"+name+"','"+selectedProcessModelNode.getId()+"','"
                 +1+"','"+Login.getInstance().getUsername()+"','"+1+"')";//插入流程实例记录到数据库中
         ConnDB.getInstance().executeUpdate(sql);
         String sql2="SELECT max(ProcessId) FROM process";
-        String id=null;
+        int id=-1;
         ResultSet res = ConnDB.getInstance().executeQuery(sql2);
         try{
             while(res.next()){
-                id=res.getString(1);
-
+                id=res.getInt(1);
             }
         }catch (SQLException e){
             e.printStackTrace();
@@ -356,7 +356,9 @@ public class TaskManageTab extends Tab {
     *创建任务实例
     *需要获取职称下的所有用户并分发任务
      */
-    private void createTask(){
+    private void createTask(int id){
+        Process p = ProcessManageTab.getProcessList().get(id);
+
 
 
     }

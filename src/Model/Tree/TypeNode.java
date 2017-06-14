@@ -1,6 +1,6 @@
 package Model.Tree;
 
-public class TypeNode implements ITreeNode{
+public class TypeNode implements INode {
 	private String name;
 	
 	public TypeNode(String name) {

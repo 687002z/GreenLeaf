@@ -1,6 +1,6 @@
 package Model.Tree;
 
-public interface ITreeNode {
+public interface INode {
 	public String getName();
 	public void setName(String name);
 	

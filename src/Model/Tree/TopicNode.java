@@ -1,6 +1,6 @@
 package Model.Tree;
 
-public class TopicNode implements ITreeNode{
+public class TopicNode implements INode {
 	private String name;
 	private String xsdFileName;
 	

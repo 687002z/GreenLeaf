@@ -1,11 +1,11 @@
 package Model;
 
-import Model.Tree.ITreeNode;
+import Model.Tree.INode;
 
 /**
  * Created by SunnyD on 2017/5/22.
  */
-public class ProcessModel implements ITreeNode{
+public class ProcessModel implements INode {
     private int id;
     private String name;
     private String modelData;

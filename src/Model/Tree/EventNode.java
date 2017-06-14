@@ -1,6 +1,6 @@
 package Model.Tree;
 
-public class EventNode implements ITreeNode{
+public class EventNode implements INode {
 	
 	private String name;
 	private String topic;

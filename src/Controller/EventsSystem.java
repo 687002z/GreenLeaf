@@ -17,7 +17,7 @@ import java.util.ResourceBundle;
 public class EventsSystem implements Initializable{
     @FXML private BorderPane borderPane;
     @FXML private TaskManageTab taskManageTab;
-    @FXML ProcessManageTab processManageTab;
+    @FXML private ProcessManageTab processManageTab;
     @FXML private TabPane tabPane;
     @FXML private Label username;
     @FXML private Label title;
@@ -53,5 +53,7 @@ public class EventsSystem implements Initializable{
         title.setText("职位："+Login.getInstance().getTitle());
         title.setFont(Font.font("Verdana", FontWeight.BOLD, 15));
     }
+
+
 
 }

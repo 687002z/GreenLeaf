@@ -1,11 +1,11 @@
 package Model;
 
-import Model.Tree.ITreeNode;
+import Model.Tree.INode;
 
 /**
  * Created by SunnyD on 2017/5/22.
  */
-public class Task implements ITreeNode{
+public class Task implements INode {
     public static final int STATUS_RUNNING=1;
     public static final int STATUS_FINISHED=2;
     private int id;

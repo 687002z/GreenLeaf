@@ -4,8 +4,7 @@ import Controller.Db.ConnDB;
 import Controller.Parse.BufferedImageTranscoder;
 import Controller.Parse.EPCParser;
 import Model.Process;
-import Model.ProcessModel;
-import Model.Tree.ITreeNode;
+import Model.Tree.INode;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
@@ -30,12 +29,12 @@ import java.util.HashMap;
  * Created by SunnyD on 2017/5/3.
  */
 public class ProcessManageTab extends Tab {
-    @FXML ListView<ITreeNode> processListView;
+    @FXML ListView<INode> processListView;
     @FXML VBox processMainVBox;
     @FXML ScrollPane roleScrollView;
     @FXML ImageView processImageView;
     @FXML StackPane processStackPane;
-    public static HashMap<Integer,Process> processList;
+    private static HashMap<Integer,Process> processList;
     private Process selectedProcessNode;
     private BufferedImageTranscoder trans;
 
@@ -86,9 +85,9 @@ public class ProcessManageTab extends Tab {
     * 给流程实例选项添加监听器
      */
     private void addProcessListenner(){
-        processListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<ITreeNode>() {
+        processListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<INode>() {
             @Override
-            public void changed(ObservableValue<? extends ITreeNode> observable, ITreeNode oldValue, ITreeNode newValue) {
+            public void changed(ObservableValue<? extends INode> observable, INode oldValue, INode newValue) {
                 selectedProcessNode = (Process) newValue;
 
                 // file may be an InputStream.

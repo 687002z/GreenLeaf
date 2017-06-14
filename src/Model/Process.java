@@ -1,12 +1,12 @@
 package Model;
 
 import Controller.Parse.EPCParser;
-import Model.Tree.ITreeNode;
+import Model.Tree.INode;
 
 /**
  * Created by SunnyD on 2017/5/22.
  */
-public class Process implements ITreeNode{
+public class Process implements INode {
     private int id;
     private String name;
     private int modelId;

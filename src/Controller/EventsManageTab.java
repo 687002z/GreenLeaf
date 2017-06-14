@@ -4,7 +4,7 @@ import Controller.Parse.Xsd.XSDNode;
 import Controller.Parse.Xsd.XSDReader;
 import Controller.Db.ConnDB;
 import Model.Tree.EventNode;
-import Model.Tree.ITreeNode;
+import Model.Tree.INode;
 import Model.Tree.TopicNode;
 import Model.Tree.TypeNode;
 import javafx.beans.value.ChangeListener;
@@ -37,7 +37,7 @@ public class EventsManageTab extends Tab{
     @FXML private Button deleteButton;
     @FXML private Button saveButton;
     private ConnDB conn;
-    private TreeItem<ITreeNode> root;
+    private TreeItem<INode> root;
     private XSDReader xsdReader;
 
     public EventsManageTab(){
@@ -55,7 +55,7 @@ public class EventsManageTab extends Tab{
 
     private void init() {//初始化函数
         TypeNode r=new TypeNode("root");
-        root=new TreeItem<ITreeNode>(r);
+        root=new TreeItem<INode>(r);
         topicTree.setRoot(root);
         conn=new ConnDB();
 
@@ -72,18 +72,18 @@ public class EventsManageTab extends Tab{
     private void createTopicNode(){
         TopicNode topic1=new TopicNode("note");
         topic1.setXsdFileName("note.xsd");
-        root.getChildren().add(new TreeItem<ITreeNode>(topic1));
+        root.getChildren().add(new TreeItem<INode>(topic1));
 
         TopicNode topic2=new TopicNode("shiporder");
         topic2.setXsdFileName("shiporder.xsd");
-        root.getChildren().add(new TreeItem<ITreeNode>(topic2));
+        root.getChildren().add(new TreeItem<INode>(topic2));
         
     }
-    private void generateEventNode(TreeItem<ITreeNode> root){
-        ITreeNode value=root.getValue();
+    private void generateEventNode(TreeItem<INode> root){
+        INode value=root.getValue();
         if(value instanceof TypeNode){
             root.setGraphic(new ImageView(new Image("imgs/icons/Folder_Mac_16px.png")));
-            ObservableList<TreeItem<ITreeNode>> list=root.getChildren();
+            ObservableList<TreeItem<INode>> list=root.getChildren();
             for(int i=0;i<list.size();i++){
                 generateEventNode(list.get(i));
             }
@@ -95,7 +95,7 @@ public class EventsManageTab extends Tab{
                     EventNode eventNode=new EventNode(rs.getString("Name"));
                     eventNode.setTopic(value.toString());
                     eventNode.setConditions(rs.getString("Conditions"));
-                    TreeItem<ITreeNode> item=new TreeItem<ITreeNode>(eventNode);
+                    TreeItem<INode> item=new TreeItem<INode>(eventNode);
                     item.setGraphic(new ImageView(new Image("imgs/icons/event_node_21px.png")));
                     root.getChildren().add(item);
                 }
@@ -109,7 +109,7 @@ public class EventsManageTab extends Tab{
         topicTree.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
             @Override
             public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-                TreeItem<ITreeNode> node=(TreeItem<ITreeNode>)newValue;
+                TreeItem<INode> node=(TreeItem<INode>)newValue;
                 Object value=node.getValue();
                 if(value instanceof TypeNode){
                     clearContent();
@@ -164,7 +164,7 @@ public class EventsManageTab extends Tab{
                 String eventName=result.get();
                 System.out.println(eventName);
 
-                TreeItem<ITreeNode> topicNode= (TreeItem) topicTree.getSelectionModel().getSelectedItem();
+                TreeItem<INode> topicNode= (TreeItem) topicTree.getSelectionModel().getSelectedItem();
                 EventNode eventNode=new EventNode(eventName);
                 eventNode.setTopic(topicNode.getValue().getName());
                 String conditions="";
@@ -174,7 +174,7 @@ public class EventsManageTab extends Tab{
                 }
                 eventNode.setConditions(conditions);
 
-                TreeItem<ITreeNode> eventItem=new TreeItem<ITreeNode>(eventNode);
+                TreeItem<INode> eventItem=new TreeItem<INode>(eventNode);
                 eventItem.setGraphic(new ImageView(new Image("imgs/icons/event_node_21px.png")));
                 topicNode.getChildren().add(eventItem);//树形结构中添加子节点
 
