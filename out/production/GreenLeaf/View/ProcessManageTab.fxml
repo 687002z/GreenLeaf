@@ -3,10 +3,8 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.image.Image?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.control.Accordion?>
-<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TreeView?>
 <?import javafx.scene.control.ContextMenu?>
@@ -20,22 +18,22 @@
                 <Accordion prefWidth="200">
                     <panes>
                         <TitledPane onMouseClicked="#showRoleManageView">
-                            <text>角色管理</text>
+                            <text>组织管理</text>
                             <content>
-                                <TreeView fx:id="newProcess">
+                                <TreeView fx:id="typeManageTreeView">
                                 </TreeView>
                             </content>
                         </TitledPane>
                         <TitledPane onMouseClicked="#showProcessView">
                             <text>流程实例</text>
                             <content>
-                                <ListView fx:id="processListView">
+                                <TreeView fx:id="processTreeView">
                                     <contextMenu>
-                                        <ContextMenu fx:id="contextMenu">
+                                        <ContextMenu>
                                             <items><MenuItem text="刷新" onAction="#refreshList"/></items>
                                         </ContextMenu>
                                     </contextMenu>
-                                </ListView>
+                                </TreeView>
                             </content>
                         </TitledPane>
                     </panes>
@@ -44,7 +42,12 @@
             <StackPane>
                 <VBox fx:id="processMainVBox">
                     <padding><Insets top="5" right="5" bottom="5" left="5"></Insets></padding>
-                    <HBox>
+                    <HBox spacing="15" >
+                        <padding><Insets top="5" right="30" bottom="5" left="5"></Insets></padding>
+                        <Label fx:id="processNameLabel"></Label>
+                        <Label fx:id="processIDLabel"></Label>
+                        <Label fx:id="processModelIDLabel"></Label>
+                        <Label fx:id="processUserLabel"></Label>
                     </HBox>
                     <ScrollPane prefWidth="500" prefHeight="680">
                         <StackPane fx:id="processStackPane">

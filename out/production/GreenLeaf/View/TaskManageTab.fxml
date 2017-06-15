@@ -46,7 +46,7 @@
             <StackPane>
                 <VBox>
                     <padding><Insets top="5" right="5" bottom="5" left="5"></Insets></padding>
-                    <HBox>
+                    <HBox spacing="15">
                         <padding><Insets top="5" right="30" bottom="5" left="5"></Insets></padding>
                         <Label fx:id="processModelNameLabel"></Label>
                         <Label fx:id="processModelIdLabel"></Label>

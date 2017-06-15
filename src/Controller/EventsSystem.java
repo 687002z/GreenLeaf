@@ -1,7 +1,7 @@
 package Controller;
 
-import Controller.Tab.ProcessManageTab;
-import Controller.Tab.TaskManageTab;
+import Controller.tab.ProcessManageTab;
+import Controller.tab.TaskManageTab;
 import Model.Login;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -41,6 +41,7 @@ public class EventsSystem implements Initializable{
             }
             taskManageTab.initTaskList();
             processManageTab.initProcessList();
+            processManageTab.initTypeManageTree();
         }
     }
 

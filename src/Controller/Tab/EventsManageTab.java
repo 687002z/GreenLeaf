@@ -1,12 +1,12 @@
-package Controller.Tab;
+package Controller.tab;
 
 import Controller.Parse.Xsd.XSDNode;
 import Controller.Parse.Xsd.XSDReader;
 import Controller.Db.ConnDB;
-import Model.Node.Tree.EventNode;
-import Model.Node.Tree.INode;
-import Model.Node.Tree.TopicNode;
-import Model.Node.Tree.TypeNode;
+import Model.Node.TreeNode.EventNode;
+import Model.Node.INode;
+import Model.Node.TreeNode.TopicNode;
+import Model.Node.TreeNode.TypeNode;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -89,7 +89,7 @@ public class EventsManageTab extends Tab{
             }
         }else if(value instanceof TopicNode){
             root.setGraphic(new ImageView(new Image("imgs/icons/topic_21px.png")));
-            ResultSet rs=conn.executeQuery("SELECT * FROM event_node WHERE Topic='"+value.toString()+"'");
+            ResultSet rs=conn.executeQuery("SELECT * FROM event_node WHERE Topic='"+value.toString()+"'",ConnDB.getInstance().getConn());
             try {
                 while(rs.next()){
                     EventNode eventNode=new EventNode(rs.getString("Name"));

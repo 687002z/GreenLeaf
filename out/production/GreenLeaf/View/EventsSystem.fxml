@@ -3,10 +3,9 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.TabPane?>
-<?import Controller.EventsManageTab?>
-<?import Controller.ComplexEventTab?>
-<?import Controller.TaskManageTab?>
-<?import Controller.ProcessManageTab?>
+<?import Controller.tab.EventsManageTab?>
+<?import Controller.tab.TaskManageTab?>
+<?import Controller.tab.ProcessManageTab?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.image.ImageView?>
@@ -19,13 +18,10 @@
         <VBox>
             <MenuBar fx:id="menu">
                 <menus>
-                    <Menu text="File" fx:id="fileMenu">
-                        <items>
-                            <MenuItem text="OpenEPML" fx:id="open" onAction="#onOpenMenuItem" />
-                        </items>
-                    </Menu>
                     <Menu text="About" fx:id="aboutMenu">
-
+                        <items>
+                            <MenuItem text="关于"></MenuItem>
+                        </items>
                     </Menu>
                 </menus>
             </MenuBar>
@@ -46,7 +42,6 @@
                 <ProcessManageTab text="流程管理" fx:id="processManageTab"/>
                 <TaskManageTab text="任务管理" fx:id="taskManageTab"/>
                 <EventsManageTab text="事件管理" fx:id="eventManageTab" />
-
             </tabs>
         </TabPane>
     </left>

@@ -32,7 +32,7 @@ public class Login {
 
     private boolean checkLogin(Dialogs.LoginResponse lr){
         String sql = "select title from users where userid = '"+lr.username+"' and "+"password = '"+lr.password+"'";
-        ResultSet rs=ConnDB.getInstance().executeQuery(sql);
+        ResultSet rs=ConnDB.getInstance().executeQuery(sql,ConnDB.getInstance().getConn());
         try {
             if(rs.next()){
                 String title=rs.getString("title");

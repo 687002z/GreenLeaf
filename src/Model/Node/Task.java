@@ -1,7 +1,5 @@
 package Model.Node;
 
-import Model.Node.Tree.INode;
-
 /**
  * Created by SunnyD on 2017/5/22.
  */

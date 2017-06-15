@@ -1,14 +1,15 @@
-package Controller.Tab;
+package Controller.tab;
 
 import Controller.Db.ConnDB;
 import Controller.Parse.BufferedImageTranscoder;
 import Model.*;
+import Model.Node.EPCNode.Func;
 import Model.Node.Process;
 import Model.Node.ProcessModel;
 import Model.Node.Task;
 import Model.Node.TaskModel;
-import Model.Node.Tree.INode;
-import Model.Node.Tree.TypeNode;
+import Model.Node.INode;
+import Model.Node.TreeNode.TypeNode;
 import View.Dialog.Dialogs;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -31,6 +32,7 @@ import org.apache.batik.transcoder.TranscoderInput;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -88,13 +90,15 @@ public class TaskManageTab extends Tab {
         String username=Login.getInstance().getUsername();
         try{
             String sql="select * from task where UserId = '"+username+"'";
-            ResultSet res=ConnDB.getInstance().executeQuery(sql);
+            ConnDB conn= ConnDB.getInstance();
+            Connection connection=conn.getConn();
+            ResultSet res=conn.executeQuery(sql,connection);
             while(res.next()){
                 Task p = new Task(res.getInt("TaskId"),res.getInt("TaskModelId"),
                         res.getInt("ProcessId"),res.getString("Data"),res.getString("UserId"),res.getInt("Status"));
 
                 String sql2="select * from task_model where TaskModelId='"+res.getString("TaskModelId")+"'";
-                ResultSet res2=ConnDB.getInstance().executeQuery(sql2);
+                ResultSet res2=ConnDB.getInstance().executeQuery(sql2,connection);
                 while(res2.next()){
                     p.setTaskModel(new TaskModel(res2.getInt("TaskModelId"),res2.getString("Name"),res2.getString("Form"),
                             res2.getString("Type"),res2.getString("Domins"),res2.getString("Role"),res2.getString("Topic")));
@@ -220,7 +224,7 @@ public class TaskManageTab extends Tab {
 
     public void initProcessModelList(){
         String sql="select * from process_model";
-        ResultSet res=ConnDB.getInstance().executeQuery(sql);
+        ResultSet res=ConnDB.getInstance().executeQuery(sql,ConnDB.getInstance().getConn());
         try {
             while(res.next()){
                 ProcessModel p=new ProcessModel(res.getInt("ProcessModelId"),res.getString("Name"),
@@ -278,13 +282,13 @@ public class TaskManageTab extends Tab {
         if(e.getClickCount()==2){
             String name=Dialogs.getInstance().showNewProcessDialog(new Stage());
             System.out.println(selectedProcessModelNode.toString());
-            int id=-1;
+            Process p=null;
             if(name!=null){
-                id=this.createProcess(name);
+                p=this.createProcess(name);
 
             }
-            if(id>=0){
-                this.createTask(id);
+            if(p!=null){
+//                this.createTask(p);
             }
 
         }
@@ -338,14 +342,14 @@ public class TaskManageTab extends Tab {
     /*
     * 从流程模型表中选择需要创建的流程模型，创建流程实例，写入数据库
      */
-    private Integer createProcess(String name){
+    private Process createProcess(String name){
 
         String sql="insert into process(Name,ModelId,Status,UserId,Func) values ('"+name+"','"+selectedProcessModelNode.getId()+"','"
                 +1+"','"+Login.getInstance().getUsername()+"','"+1+"')";//插入流程实例记录到数据库中
         ConnDB.getInstance().executeUpdate(sql);
         String sql2="SELECT max(ProcessId) FROM process";
         int id=-1;
-        ResultSet res = ConnDB.getInstance().executeQuery(sql2);
+        ResultSet res = ConnDB.getInstance().executeQuery(sql2,ConnDB.getInstance().getConn());
         try{
             while(res.next()){
                 id=res.getInt(1);
@@ -353,15 +357,22 @@ public class TaskManageTab extends Tab {
         }catch (SQLException e){
             e.printStackTrace();
         }
-        return id;
+
+        //创建进程实例节点，放入集合中用以维护
+        Process p = new Process(id,name,selectedProcessModelNode.getId(),1,Login.getInstance().getUsername(),"1");
+        ProcessManageTab.getProcessList().put(p.getId(),p);
+
+        return p;
     }
     /*
     *创建任务实例
     *需要获取职称下的所有用户并分发任务
      */
-    private void createTask(int id){
-        Process p = ProcessManageTab.getProcessList().get(id);
-
+    private void createTask(Process p){
+        HashMap<String,Func> funcs=p.getEpc().getFuncs();
+        for(Func f:funcs.values()){
+            System.out.println(f.getTaskModelId());
+        }
 
 
     }
@@ -375,6 +386,7 @@ public class TaskManageTab extends Tab {
     *开启复杂事件计算服务
      */
     private void startComplexEventService(){
+        System.out.println("准备开启复杂事件计算服务。");
 
     }
     /*

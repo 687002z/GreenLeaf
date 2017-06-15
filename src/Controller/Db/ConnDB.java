@@ -16,7 +16,7 @@ public class ConnDB {
     public static ConnDB getInstance(){
         return instance;
     }
-    private Connection getConn() {
+    public Connection getConn() {
         try {
            // Class.forName(DBDRIVER).newInstance();
         	Class.forName(DB_DRIVER);
@@ -39,11 +39,10 @@ public class ConnDB {
         }
     }
 
-    public ResultSet executeQuery(String sql) {
+    public ResultSet executeQuery(String sql,Connection conn) {
         ResultSet rs = null;
         try {
             rs = null;
-            Connection conn = this.getConn();
             Statement stmt = conn.createStatement();
             rs = stmt.executeQuery(sql);
         } catch (SQLException ex) {
