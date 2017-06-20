@@ -6,6 +6,8 @@ import Controller.Parse.EPCParser;
 import Model.Node.Process;
 import Model.Node.INode;
 import Model.Node.TreeNode.TypeNode;
+import Model.Node.TreeNode.UserNode;
+import View.Dialog.Dialogs;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
@@ -17,6 +19,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import org.apache.batik.transcoder.TranscoderException;
 import org.apache.batik.transcoder.TranscoderInput;
 
@@ -32,20 +35,24 @@ import java.util.HashMap;
  */
 public class ProcessManageTab extends Tab {
     @FXML TreeView<INode> processTreeView;
-    @FXML TreeView<TypeNode> typeManageTreeView;
+    @FXML TreeView<INode> typeManageTreeView;
     @FXML VBox processMainVBox;
-    @FXML ScrollPane roleScrollView;
+    @FXML VBox roleVBox;
     @FXML ImageView processImageView;
     @FXML StackPane processStackPane;
     @FXML Label processNameLabel;
     @FXML Label processModelIDLabel;
     @FXML Label processUserLabel;
     @FXML Label processIDLabel;
+    @FXML ListView<INode> userTypeListView;
+    @FXML Label selectedUserLabel;
     private static HashMap<Integer,Process> processList;
     private Process selectedProcessNode;
+    private UserNode selectedUserNode;
     private BufferedImageTranscoder trans;
     private TreeItem<INode> finishedItem;
     private TreeItem<INode> runningItem;
+    private TreeItem<INode> userTypeTreeRoot;
 
     public ProcessManageTab(){
         FXMLLoader loader=new FXMLLoader(getClass().getResource("/View/ProcessManageTab.fxml"));
@@ -145,27 +152,87 @@ public class ProcessManageTab extends Tab {
     }
 
     public void initTypeManageTree(){
-        TreeItem<TypeNode> p= new TreeItem<>(new TypeNode("Root",0));
-        typeManageTreeView.setRoot(p);
+        userTypeTreeRoot= new TreeItem<INode>(new TypeNode("Root",0));
+        userTypeTreeRoot.setExpanded(true);
+        typeManageTreeView.setRoot(userTypeTreeRoot);
         Connection conn=ConnDB.getInstance().getConn();
-        this.generateTypeManageTreeType(p,conn);
+        this.generateTypeTreeType(userTypeTreeRoot,conn,true);
+        this.addTypeTreeListenner();
     }
-    private void generateTypeManageTreeType(TreeItem<TypeNode> root,Connection conn){
-        int id = root.getValue().getId();
+    private void generateTypeTreeType(TreeItem<INode> root,Connection conn,boolean leaf){
+        int id = ((TypeNode)root.getValue()).getId();
         String sql = "select id,name from type_user where parentID ='"+id+"'";
-        ResultSet res=ConnDB.getInstance().executeQuery(sql,ConnDB.getInstance().getConn());
+        ResultSet res=ConnDB.getInstance().executeQuery(sql,conn);
         try {
             while(res.next()){
-                TreeItem<TypeNode> p = new TreeItem<>(new TypeNode(res.getString("name"),res.getInt("id")));
+                TreeItem<INode> p = new TreeItem<>(new TypeNode(res.getString("name"),res.getInt("id")));
+                p.setGraphic(new ImageView(new Image("imgs/icons/Folder_mac_16px.png")));
                 root.getChildren().add(p);
-                generateTypeManageTreeType(p,conn);
+                generateTypeTreeType(p,conn,leaf);
+                if(leaf){
+                    this.generateTypeTreeLeaf(p,conn);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
+    private void generateTypeTreeLeaf(TreeItem<INode> root,Connection conn){
 
+        if(root.getValue() instanceof TypeNode){
+            int id = ((TypeNode)root.getValue()).getId();
+            String sql = "select userid from user_type where typeid='"+id+"'";
+            ResultSet res =ConnDB.getInstance().executeQuery(sql,conn);
+            try{
+                while(res.next()){
+                    TreeItem<INode> p = new TreeItem<>(new UserNode(res.getString("userid"),id));
+                    p.setGraphic(new ImageView(new Image("imgs/icons/user_16px.png")));
+                    root.getChildren().add(p);
+                }
+            }catch (SQLException e){
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void addTypeTreeListenner(){
+        typeManageTreeView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<TreeItem<INode>>() {
+            @Override
+            public void changed(ObservableValue<? extends TreeItem<INode>> observable, TreeItem<INode> oldValue, TreeItem<INode> newValue) {
+                INode p1 = newValue.getValue();
+                if(p1 instanceof UserNode){
+                    UserNode p =(UserNode)p1;
+                    selectedUserLabel.setText("选择的用户是:"+p.getName());
+                    initUserTypeListView(p.getName());
+                    selectedUserNode=p;
+                }
+            }
+        });
+    }
+
+    private void initUserTypeListView(String name){
+        userTypeListView.getItems().clear();
+        String sql = "select a.name,a.id from type_user as a,user_type as b where b.typeid=a.id and b.userid='"+name+"'";
+        ResultSet res = ConnDB.getInstance().executeQuery(sql,ConnDB.getInstance().getConn());
+        try {
+            while(res.next()){
+                userTypeListView.getItems().add(new TypeNode(res.getString("name"),res.getInt("id")));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    public void addUserTypeAction(){
+        TreeItem<INode> p = Dialogs.getInstance().showAddUserTypeDialog(new Stage(),userTypeTreeRoot);
+        if(p!=null){
+
+        }
+
+
+    }
 
     /*
     * 进程实例列表的刷新回调函数
@@ -182,7 +249,7 @@ public class ProcessManageTab extends Tab {
     @FXML
     private void showRoleManageView(){
         processMainVBox.setVisible(false);
-        roleScrollView.setVisible(true);
+        roleVBox.setVisible(true);
     }
 
     /*
@@ -191,7 +258,7 @@ public class ProcessManageTab extends Tab {
     @FXML
     private void showProcessView(){
         processMainVBox.setVisible(true);
-        roleScrollView.setVisible(false);
+        roleVBox.setVisible(false);
     }
 
     public static HashMap<Integer, Process> getProcessList() {

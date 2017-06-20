@@ -1,15 +1,17 @@
 package View.Dialog;
 
+import Model.Node.INode;
+import Model.Node.TreeNode.TypeNode;
+import Model.Node.TreeNode.UserNode;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -29,6 +31,7 @@ public class Dialogs {
     private static Dialogs instance=new Dialogs();
     private LoginResponse lr;
     private String processName;
+    private TreeItem<INode> selectedTypeNode;
 
     public static Dialogs getInstance(){
         return instance;
@@ -256,6 +259,53 @@ public class Dialogs {
         dial.showDialog();
         return processName;
 
+    }
+    public TreeItem<INode> showAddUserTypeDialog(Stage owner,TreeItem<INode> root){
+        selectedTypeNode=null;
+        VBox vb = new VBox();
+        Scene scene = new Scene(vb);
+        final Dialog dial = new Dialog("添加组织信息", owner, scene);
+        vb.setPadding(new Insets(10, 10, 10, 10));
+        vb.setSpacing(10);
+
+        TreeView<INode> tv=new TreeView<>();
+        tv.setRoot(root);
+        tv.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<TreeItem<INode>>() {
+            @Override
+            public void changed(ObservableValue<? extends TreeItem<INode>> observable, TreeItem<INode> oldValue, TreeItem<INode> newValue) {
+                if(newValue.getValue() instanceof TypeNode){
+                    selectedTypeNode=newValue;
+                }
+            }
+        });
+        vb.getChildren().add(tv);
+        Button submit = new Button("提交");
+        submit.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent e) {
+                dial.close();
+
+            }
+        });
+        Button noButton = new Button("取消");
+        noButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent e) {
+                dial.close();
+                selectedTypeNode=null;
+            }
+        });
+        HBox buttons = new HBox();
+        buttons.setAlignment(Pos.CENTER);
+        buttons.setSpacing(10);
+        buttons.getChildren().addAll(submit, noButton);
+
+        BorderPane bp = new BorderPane();
+        bp.setCenter(buttons);
+        vb.getChildren().add(bp);
+        dial.showDialog();
+
+        return selectedTypeNode;
     }
 
 }

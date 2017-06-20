@@ -10,6 +10,8 @@
 <?import javafx.scene.control.ContextMenu?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Button?>
 <fx:root type="javafx.scene.control.Tab" xmlns:fx="http://javafx.com/fxml">
     <VBox spacing="15" fx:id="vbox1">
         <padding><Insets top="15" right="15" bottom="15" left="15"></Insets></padding>
@@ -21,6 +23,13 @@
                             <text>组织管理</text>
                             <content>
                                 <TreeView fx:id="typeManageTreeView">
+                                    <contextMenu>
+                                        <ContextMenu>
+                                            <items><MenuItem text="刷新" onAction="#refreshList"/></items>
+                                            <items><MenuItem text="添加" ></MenuItem></items>
+                                            <items><MenuItem text="删除" ></MenuItem></items>
+                                        </ContextMenu>
+                                    </contextMenu>
                                 </TreeView>
                             </content>
                         </TitledPane>
@@ -59,8 +68,23 @@
                     </ScrollPane>
                 </VBox>
 
-                <ScrollPane fx:id="roleScrollView" prefWidth="500" maxHeight="680" >
-                </ScrollPane>
+                <VBox fx:id="roleVBox" spacing="8">
+                    <padding><Insets top="5" right="5" bottom="5" left="5"></Insets></padding>
+                    <HBox spacing="8">
+                        <Label fx:id="selectedUserLabel">选择的用户是:</Label>
+                    </HBox>
+                    <HBox spacing="8">
+                        <VBox>
+                            <Label>已有职位列表:</Label>
+                            <ListView fx:id="userTypeListView"></ListView>
+                        </VBox>
+
+                        <VBox spacing="30">
+                            <Button onAction="#addUserTypeAction">添加</Button>
+
+                        </VBox>
+                    </HBox>
+                </VBox>
             </StackPane>
         </HBox>
     </VBox>
