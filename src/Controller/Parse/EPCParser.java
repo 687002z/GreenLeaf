@@ -17,7 +17,6 @@ import java.util.Iterator;
  * Created by SunnyD on 2016/11/3.
  */
 public class EPCParser {
-//    private static EPCParser parser = new EPCParser();
     private SAXReader reader = null;
     private ArrayList<Rule> ruleArr;
     private ArrayList<Arc> arcArr;
@@ -126,5 +125,29 @@ public class EPCParser {
 
     public String getServicesName() {
         return servicesName;
+    }
+
+    public Func getFuncByName(String name){
+        for(Func f : funcs.values()){
+            if(f.getFuncName().equals(name)){
+                return f;
+            }
+        }
+        return null;
+    }
+    public Func getFuncByID(String id){
+        return funcs.get(id);
+    }
+
+    public Event getEventByName(String name){
+        for(Event e:events.values()){
+            if(e.getEventName().equals(name)){
+                return e;
+            }
+        }
+        return null;
+    }
+    public Event getEventByID(String id){
+        return events.get(id);
     }
 }

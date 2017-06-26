@@ -1,6 +1,7 @@
 package Model.Node;
 
 import Controller.Parse.EPCParser;
+import Controller.Parse.SVGModelParser;
 
 /**
  * Created by SunnyD on 2017/5/22.
@@ -13,6 +14,7 @@ public class Process implements INode {
     private String userid;
     private String func;
     private EPCParser epc;
+    private SVGModelParser svg;
 
     public Process(int id,String name,int modelId,int status,String userid,String func){
         this.id=id;
@@ -82,5 +84,13 @@ public class Process implements INode {
 
     public void setEpc(EPCParser epc) {
         this.epc = epc;
+    }
+
+    public SVGModelParser getSvg() {
+        return svg;
+    }
+
+    public void setSvg(SVGModelParser svg) {
+        this.svg = svg;
     }
 }

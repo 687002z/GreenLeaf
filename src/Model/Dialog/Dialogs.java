@@ -1,8 +1,7 @@
-package View.Dialog;
+package Model.Dialog;
 
 import Model.Node.INode;
 import Model.Node.TreeNode.TypeNode;
-import Model.Node.TreeNode.UserNode;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;

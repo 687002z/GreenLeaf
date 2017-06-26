@@ -10,7 +10,7 @@ import Model.Node.Task;
 import Model.Node.TaskModel;
 import Model.Node.INode;
 import Model.Node.TreeNode.TypeNode;
-import View.Dialog.Dialogs;
+import Model.Dialog.Dialogs;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;

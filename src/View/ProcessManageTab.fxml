@@ -25,9 +25,9 @@
                                 <TreeView fx:id="typeManageTreeView">
                                     <contextMenu>
                                         <ContextMenu>
-                                            <items><MenuItem text="刷新" onAction="#refreshList"/></items>
-                                            <items><MenuItem text="添加" ></MenuItem></items>
-                                            <items><MenuItem text="删除" ></MenuItem></items>
+                                            <items><MenuItem text="刷新" onAction="#refreshTypeTreeCallBack"/></items>
+                                            <items><MenuItem text="删除" onAction="#deleteUserAndBackCallBack"/></items>
+                                            <!--<items><MenuItem text="添加" onAction="#addUserTypeCallBack"/></items>-->
                                         </ContextMenu>
                                     </contextMenu>
                                 </TreeView>
@@ -39,7 +39,7 @@
                                 <TreeView fx:id="processTreeView">
                                     <contextMenu>
                                         <ContextMenu>
-                                            <items><MenuItem text="刷新" onAction="#refreshList"/></items>
+                                            <items><MenuItem text="刷新" onAction="#refreshProcessTreeList"/></items>
                                         </ContextMenu>
                                     </contextMenu>
                                 </TreeView>
@@ -75,14 +75,13 @@
                     </HBox>
                     <HBox spacing="8">
                         <VBox>
-                            <Label>已有职位列表:</Label>
-                            <ListView fx:id="userTypeListView"></ListView>
+                            <Label>已有组织列表:</Label>
+                            <HBox spacing="8">
+                                <ListView fx:id="userTypeListView"></ListView>
+                                <Button onAction="#addUserTypeAction">添加</Button>
+                            </HBox>
                         </VBox>
 
-                        <VBox spacing="30">
-                            <Button onAction="#addUserTypeAction">添加</Button>
-
-                        </VBox>
                     </HBox>
                 </VBox>
             </StackPane>

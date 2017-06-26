@@ -1,7 +1,7 @@
 package Model;
 
 import Controller.Db.ConnDB;
-import View.Dialog.Dialogs;
+import Model.Dialog.Dialogs;
 import javafx.stage.Stage;
 
 import java.sql.ResultSet;

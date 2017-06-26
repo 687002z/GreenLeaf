@@ -3,25 +3,29 @@ package Controller.tab;
 import Controller.Db.ConnDB;
 import Controller.Parse.BufferedImageTranscoder;
 import Controller.Parse.EPCParser;
+import Controller.Parse.SVGModelParser;
 import Model.Node.Process;
 import Model.Node.INode;
 import Model.Node.TreeNode.TypeNode;
 import Model.Node.TreeNode.UserNode;
-import View.Dialog.Dialogs;
+import Model.Dialog.Dialogs;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.apache.batik.transcoder.TranscoderException;
 import org.apache.batik.transcoder.TranscoderInput;
+import org.dom4j.Element;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -49,6 +53,7 @@ public class ProcessManageTab extends Tab {
     private static HashMap<Integer,Process> processList;
     private Process selectedProcessNode;
     private UserNode selectedUserNode;
+    private TreeItem<INode> selectedTypeTreeItem;
     private BufferedImageTranscoder trans;
     private TreeItem<INode> finishedItem;
     private TreeItem<INode> runningItem;
@@ -88,9 +93,14 @@ public class ProcessManageTab extends Tab {
             while(res.next()){
                 Process p = new Process(res.getInt("ProcessId"),res.getString("Name"),res.getInt("ModelId"),
                         res.getInt("Status"),res.getString("UserId"),res.getString("Func"));
-                EPCParser epc=new EPCParser();//生成流程实例对应的EPC解析对象
+                //生成流程实例对应的EPC解析对象
+                EPCParser epc=new EPCParser();
                 epc.read(TaskManageTab.getProcessModelMap().get(p.getModelId()).getModelData());//通过流程模型Map获取modeldata
                 p.setEpc(epc);
+                //生成流程实例对应的SVG解析对象
+                SVGModelParser svg = new SVGModelParser();
+                svg.read(TaskManageTab.getProcessModelMap().get(p.getModelId()).getGraphData());
+                p.setSvg(svg);
                 runningItem.getChildren().add(new TreeItem<>(p));
                 processList.put(p.getId(),p);
             }
@@ -118,6 +128,7 @@ public class ProcessManageTab extends Tab {
         processTreeView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<TreeItem<INode>>() {
             @Override
             public void changed(ObservableValue<? extends TreeItem<INode>> observable, TreeItem<INode> oldValue, TreeItem<INode> newValue) {
+                processStackPane.getChildren().clear();
                 if(newValue.getValue() instanceof Process){
                     selectedProcessNode =  (Process) newValue.getValue();
 
@@ -132,15 +143,38 @@ public class ProcessManageTab extends Tab {
                         // Use WritableImage if you want to further modify the image (by using a PixelWriter)
                         Image img = SwingFXUtils.toFXImage(trans.getBufferedImage(), null);
                         processImageView.setImage(img);
+                        processStackPane.getChildren().add(processImageView);
                     } catch (TranscoderException e) {
                         e.printStackTrace();
                     }
+                    //添加元素节点
+                    addImageViewstoStackPane(selectedProcessNode);
 
+                    //更新标签信息
                     updateLabelInfo(selectedProcessNode);
                 }
 
             }
         });
+
+    }
+
+    private void addImageViewstoStackPane(Process p){
+        HashMap<String,ImageView> funcMap =p.getSvg().getFuncImagesMap();
+        for(ImageView v: funcMap.values()){
+            processStackPane.getChildren().add(v);
+            v.onMouseEnteredProperty().addListener(new ChangeListener<EventHandler<? super MouseEvent>>() {
+                @Override
+                public void changed(ObservableValue<? extends EventHandler<? super MouseEvent>> observable, EventHandler<? super MouseEvent> oldValue, EventHandler<? super MouseEvent> newValue) {
+
+                }
+            });
+
+        }
+        HashMap<String,ImageView> eventMap =p.getSvg().getEventImagesMap();
+        for(ImageView v: eventMap.values()){
+            processStackPane.getChildren().add(v);
+        }
 
     }
 
@@ -159,6 +193,10 @@ public class ProcessManageTab extends Tab {
         this.generateTypeTreeType(userTypeTreeRoot,conn,true);
         this.addTypeTreeListenner();
     }
+
+    /*
+    生成组织管理树的类型节点
+     */
     private void generateTypeTreeType(TreeItem<INode> root,Connection conn,boolean leaf){
         int id = ((TypeNode)root.getValue()).getId();
         String sql = "select id,name from type_user where parentID ='"+id+"'";
@@ -178,6 +216,9 @@ public class ProcessManageTab extends Tab {
         }
     }
 
+    /*
+    生成组织管理树的叶子节点
+     */
     private void generateTypeTreeLeaf(TreeItem<INode> root,Connection conn){
 
         if(root.getValue() instanceof TypeNode){
@@ -195,11 +236,14 @@ public class ProcessManageTab extends Tab {
             }
         }
     }
-
+    /*
+    添加组织管理树的监听器
+     */
     private void addTypeTreeListenner(){
         typeManageTreeView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<TreeItem<INode>>() {
             @Override
             public void changed(ObservableValue<? extends TreeItem<INode>> observable, TreeItem<INode> oldValue, TreeItem<INode> newValue) {
+                selectedTypeTreeItem=newValue;
                 INode p1 = newValue.getValue();
                 if(p1 instanceof UserNode){
                     UserNode p =(UserNode)p1;
@@ -224,10 +268,24 @@ public class ProcessManageTab extends Tab {
         }
     }
 
+    /*
+    组织管理树添加按钮的回调函数
+     */
     @FXML
     public void addUserTypeAction(){
         TreeItem<INode> p = Dialogs.getInstance().showAddUserTypeDialog(new Stage(),userTypeTreeRoot);
         if(p!=null){
+            TypeNode type = (TypeNode)p.getValue();
+            UserNode u =new UserNode(selectedUserNode.getUserID(),type.getId());
+            TreeItem<INode> t = new TreeItem<>(u);
+            t.setGraphic(new ImageView(new Image("imgs/icons/user_16px.png")));
+            p.getChildren().add(t);//给选择类型树添加用户节点
+
+            //给组织列表添加组织类型
+            userTypeListView.getItems().add(type);
+            //更新数据库数据
+            String sql = "insert into user_type (userid,typeid) values('"+selectedUserNode.getUserID()+"','"+type.getId()+"')";
+            ConnDB.getInstance().executeUpdate(sql);
 
         }
 
@@ -235,10 +293,39 @@ public class ProcessManageTab extends Tab {
     }
 
     /*
-    * 进程实例列表的刷新回调函数
+        对用户组织树进行删除操作的回调函数
      */
     @FXML
-    private void refreshList(ActionEvent e){
+    private void deleteUserAndBackCallBack(){
+        //从数据库中删除相应节点
+        if(selectedTypeTreeItem.getValue() instanceof TypeNode){
+            TypeNode p = (TypeNode) selectedTypeTreeItem.getValue();
+
+            String sql = "delete from type_user where id = '"+p.getId()+"'";
+            ConnDB.getInstance().executeUpdate(sql);
+        }else if(selectedTypeTreeItem.getValue() instanceof  UserNode){
+            UserNode u = (UserNode) selectedTypeTreeItem.getValue();
+
+            String sql = "delete from user_type where userid ='"+u.getUserID()+"'and typeid='"+u.getTypeID()+"'";
+            ConnDB.getInstance().executeUpdate(sql);
+        }
+        selectedTypeTreeItem.getParent().getChildren().remove(selectedTypeTreeItem);
+
+    }
+
+    /*
+    * 用户组织树的刷新回调函数
+     */
+    @FXML
+    private void refreshTypeTreeCallBack(ActionEvent e){
+        typeManageTreeView.refresh();
+    }
+
+    /*
+    * 进程实例树的刷新回调函数
+     */
+    @FXML
+    private void refreshProcessTreeList(ActionEvent e){
         processTreeView.refresh();
         this.initProcessList();
     }
