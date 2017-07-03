@@ -12,6 +12,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.image.Image?>
 <fx:root type="javafx.scene.control.Tab" xmlns:fx="http://javafx.com/fxml">
     <VBox spacing="15" fx:id="vbox1">
         <padding><Insets top="15" right="15" bottom="15" left="15"></Insets></padding>

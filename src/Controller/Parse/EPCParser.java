@@ -50,15 +50,15 @@ public class EPCParser {
             while (it.hasNext()) {
                 Element ele = it.next();
                 if (ele.getName().equals("event")) {
-                    Event e = new Event(ele.attributeValue("id"),ele.attributeValue("Theme"),ele.element("name").getText());
+                    Event e = new Event(ele.attributeValue("id"),ele.element("name").getText(),ele.attributeValue("Theme"));
                     events.put(ele.attributeValue("id"), e);
                 } else if (ele.getName().equals("and") || ele.getName().equals("or") || ele.getName().equals("xor")) {
                     ruleArr.add(new Rule(ele.attributeValue("id"), ele.getName()));
                 } else if (ele.getName().equals("arc")) {
                     Element p = ele.element("flow");
                     arcArr.add(new Arc(ele.attributeValue("id"), p.attributeValue("source"), p.attributeValue("target")));
-                } else if(ele.getName().equals("func")){
-                    Func f = new Func(ele.attributeValue("id"),ele.attributeValue("name"),ele.attributeValue("TaskModelId"));
+                } else if(ele.getName().equals("function")){
+                    Func f = new Func(ele.attributeValue("id"),ele.element("name").getText(),ele.attributeValue("TaskModelId"));
                     funcs.put(f.getId(),f);
                 }
             }
@@ -129,6 +129,7 @@ public class EPCParser {
 
     public Func getFuncByName(String name){
         for(Func f : funcs.values()){
+            System.out.println(f.getFuncName());
             if(f.getFuncName().equals(name)){
                 return f;
             }

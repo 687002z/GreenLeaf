@@ -359,7 +359,7 @@ public class TaskManageTab extends Tab {
         }
 
         //创建进程实例节点，放入集合中用以维护
-        Process p = new Process(id,name,selectedProcessModelNode.getId(),1,Login.getInstance().getUsername(),"1");
+        Process p = new Process(id,name,selectedProcessModelNode.getId(),1,Login.getInstance().getUsername(),"","");
         ProcessManageTab.getProcessList().put(p.getId(),p);
 
         return p;

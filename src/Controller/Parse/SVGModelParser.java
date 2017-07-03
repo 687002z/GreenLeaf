@@ -57,7 +57,7 @@ public class SVGModelParser {
                     //funcNode
                     if(p.attributeValue("fill").equals("#80ff80")){
                         funcImagesMap.put(e.element("text").getText(),pImage);
-                    }else if(p.attributeValue("file").equals("#ff8080")){
+                    }else if(p.attributeValue("fill").equals("#ff8080")){
                         eventImagesMap.put(e.element("text").getText(),pImage);
                     }
 

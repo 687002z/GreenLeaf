@@ -3,6 +3,10 @@ package Model.Node;
 import Controller.Parse.EPCParser;
 import Controller.Parse.SVGModelParser;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Created by SunnyD on 2017/5/22.
  */
@@ -12,17 +16,20 @@ public class Process implements INode {
     private int modelId;
     private int status;
     private String userid;
-    private String func;
     private EPCParser epc;
     private SVGModelParser svg;
+    private List<String> finishedFuncList;
+    private List<String> finishedEventList;
 
-    public Process(int id,String name,int modelId,int status,String userid,String func){
+    public Process(int id,String name,int modelId,int status,String userid,String finishedFunc,String finishedEvent){
         this.id=id;
         this.name=name;
         this.modelId=modelId;
         this.status=status;
         this.userid=userid;
-        this.func=func;
+
+        finishedFuncList= Arrays.asList(finishedFunc.split(","));
+        finishedEventList=Arrays.asList(finishedEvent.split(","));
     }
 
     public int getId() {
@@ -65,14 +72,6 @@ public class Process implements INode {
         this.userid = userid;
     }
 
-    public String getFunc() {
-        return func;
-    }
-
-    public void setFunc(String func) {
-        this.func = func;
-    }
-
     @Override
     public String toString() {
         return this.name;
@@ -92,5 +91,13 @@ public class Process implements INode {
 
     public void setSvg(SVGModelParser svg) {
         this.svg = svg;
+    }
+
+    public List<String> getFinishedFuncList() {
+        return finishedFuncList;
+    }
+
+    public List<String> getFinishedEventList() {
+        return finishedEventList;
     }
 }

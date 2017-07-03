@@ -17,11 +17,15 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
+import javafx.scene.effect.BlendMode;
+import javafx.scene.effect.ColorAdjust;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.apache.batik.transcoder.TranscoderException;
 import org.apache.batik.transcoder.TranscoderInput;
@@ -58,6 +62,9 @@ public class ProcessManageTab extends Tab {
     private TreeItem<INode> finishedItem;
     private TreeItem<INode> runningItem;
     private TreeItem<INode> userTypeTreeRoot;
+    private Tooltip showProcessTip;
+    private DropShadow dropShadow;
+    private ColorAdjust colorAdjust;
 
     public ProcessManageTab(){
         FXMLLoader loader=new FXMLLoader(getClass().getResource("/View/ProcessManageTab.fxml"));
@@ -76,6 +83,11 @@ public class ProcessManageTab extends Tab {
     public void init(){
         trans = new BufferedImageTranscoder();
         processList = new HashMap<>();
+        dropShadow = new DropShadow( 20, Color.AQUA );
+        showProcessTip=new Tooltip();
+        colorAdjust = new ColorAdjust();
+        colorAdjust.setBrightness(-0.8);
+
     }
 
     /*
@@ -92,7 +104,7 @@ public class ProcessManageTab extends Tab {
         try {
             while(res.next()){
                 Process p = new Process(res.getInt("ProcessId"),res.getString("Name"),res.getInt("ModelId"),
-                        res.getInt("Status"),res.getString("UserId"),res.getString("Func"));
+                        res.getInt("Status"),res.getString("UserId"),res.getString("Finished_func"),res.getString("Finished_event"));
                 //生成流程实例对应的EPC解析对象
                 EPCParser epc=new EPCParser();
                 epc.read(TaskManageTab.getProcessModelMap().get(p.getModelId()).getModelData());//通过流程模型Map获取modeldata
@@ -150,6 +162,9 @@ public class ProcessManageTab extends Tab {
                     //添加元素节点
                     addImageViewstoStackPane(selectedProcessNode);
 
+                    //更新流程元素状态
+                    loadProcessBaseState(selectedProcessNode);
+
                     //更新标签信息
                     updateLabelInfo(selectedProcessNode);
                 }
@@ -161,21 +176,67 @@ public class ProcessManageTab extends Tab {
 
     private void addImageViewstoStackPane(Process p){
         HashMap<String,ImageView> funcMap =p.getSvg().getFuncImagesMap();
-        for(ImageView v: funcMap.values()){
-            processStackPane.getChildren().add(v);
-            v.onMouseEnteredProperty().addListener(new ChangeListener<EventHandler<? super MouseEvent>>() {
-                @Override
-                public void changed(ObservableValue<? extends EventHandler<? super MouseEvent>> observable, EventHandler<? super MouseEvent> oldValue, EventHandler<? super MouseEvent> newValue) {
 
+        for(String name: funcMap.keySet()){
+            System.out.println(name);
+            ImageView v = funcMap.get(name);
+            processStackPane.getChildren().add(v);
+            v.setOnMouseEntered(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    showProcessTip.setText(p.getEpc().getFuncByName(name).getFuncInfo());
+                    showProcessTip.show(v,event.getScreenX()+10,event.getScreenY()+10);
+                    if(v.getEffect()==null){
+                        v.setEffect(dropShadow);
+                    }
+
+                    System.out.println(event.getScreenX() +","+event.getScreenY());
                 }
             });
+            v.setOnMouseExited(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    showProcessTip.hide();
+                    if(v.getEffect()==dropShadow){
+                        v.setEffect(null);
+                    }
+                    System.out.println("exit");
+                }
+            });
+
 
         }
         HashMap<String,ImageView> eventMap =p.getSvg().getEventImagesMap();
         for(ImageView v: eventMap.values()){
+//            v.setEffect(colorAdjust);
             processStackPane.getChildren().add(v);
         }
 
+    }
+
+    private void loadProcessBaseState(Process p){
+        for(String name : p.getFinishedFuncList()){
+            try{
+                if(!name.equals("")){
+                    ImageView v=p.getSvg().getFuncImagesMap().get(name);
+                    v.setEffect(colorAdjust);
+                }
+
+            }catch (NullPointerException e){
+                e.printStackTrace();
+            }
+        }
+
+        for(String name : p.getFinishedEventList()){
+            try{
+                if(!name.equals("")){
+                    ImageView v=p.getSvg().getEventImagesMap().get(name);
+                    v.setEffect(colorAdjust);
+                }
+            }catch (NullPointerException e){
+                e.printStackTrace();
+            }
+        }
     }
 
     private void updateLabelInfo(Process p){
@@ -286,10 +347,7 @@ public class ProcessManageTab extends Tab {
             //更新数据库数据
             String sql = "insert into user_type (userid,typeid) values('"+selectedUserNode.getUserID()+"','"+type.getId()+"')";
             ConnDB.getInstance().executeUpdate(sql);
-
         }
-
-
     }
 
     /*

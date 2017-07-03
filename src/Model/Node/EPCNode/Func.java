@@ -7,7 +7,7 @@ public class Func {
     private String id;
     private String funcName;
     private String taskModelId;
-
+    private String funcInfo;
     public Func(String id,String funcName,String taskModelId){
         this.id=id;
         this.funcName=funcName;
@@ -37,5 +37,10 @@ public class Func {
     public void setTaskModelId(String taskModelId) {
         this.taskModelId = taskModelId;
     }
+
+    public String getFuncInfo(){
+        return "函数ID为:"+id+"\n函数名为:"+funcName+"\n绑定的任务模型ID为:"+taskModelId+"\n运行状态:运行中\n";
+    }
+
 }
 
