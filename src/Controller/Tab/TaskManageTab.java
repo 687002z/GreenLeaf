@@ -314,7 +314,7 @@ public class TaskManageTab extends Tab {
                 }
             }
         }catch (Exception e) {
-            e.printStackTrace();
+//            e.printStackTrace();
             Dialogs.getInstance().showMessageDialog(new Stage(),"填写内容出错！","错误");
         }
 
@@ -344,8 +344,8 @@ public class TaskManageTab extends Tab {
      */
     private Process createProcess(String name){
 
-        String sql="insert into process(Name,ModelId,Status,UserId,Func) values ('"+name+"','"+selectedProcessModelNode.getId()+"','"
-                +1+"','"+Login.getInstance().getUsername()+"','"+1+"')";//插入流程实例记录到数据库中
+        String sql="insert into process(Name,ModelId,Status,UserId,Finished_func,Finished_event) values ('"+name+"','"+selectedProcessModelNode.getId()+"','"
+                +1+"','"+Login.getInstance().getUsername()+"','','')";//插入流程实例记录到数据库中
         ConnDB.getInstance().executeUpdate(sql);
         String sql2="SELECT max(ProcessId) FROM process";
         int id=-1;
@@ -361,6 +361,8 @@ public class TaskManageTab extends Tab {
         //创建进程实例节点，放入集合中用以维护
         Process p = new Process(id,name,selectedProcessModelNode.getId(),1,Login.getInstance().getUsername(),"","");
         ProcessManageTab.getProcessList().put(p.getId(),p);
+
+        sendStartEvent();
 
         return p;
     }

@@ -57,6 +57,4 @@ public class EventsSystem implements Initializable{
         title.setFont(Font.font("Verdana", FontWeight.BOLD, 15));
     }
 
-
-
 }
