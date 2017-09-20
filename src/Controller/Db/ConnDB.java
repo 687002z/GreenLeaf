@@ -7,7 +7,7 @@ import java.sql.Statement;
 
 public class ConnDB {
 	private final String DB_DRIVER = "com.mysql.jdbc.Driver";
-    private final String DB_URL = "jdbc:mysql://127.0.0.1:3306/mydb";
+    private final String DB_URL = "jdbc:mysql://127.0.0.1:3306/mydb?useUnicode=true&characterEncoding=utf-8";
     private final String DB_USER = "root";
     private final String DB_PASSWORD = "root";
     private Connection conn = null;

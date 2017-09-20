@@ -60,11 +60,11 @@ public class EPCParser {
                 } else if(ele.getName().equals("function")){
                     Func f = new Func(ele.attributeValue("id"),ele.element("name").getText(),ele.attributeValue("TaskModelId"));
                     funcs.put(f.getId(),f);
+                } else if(ele.getName().equals("iu")){
+
                 }
             }
             parseFileNum++;
-
-            System.out.println("已经解析了"+parseFileNum+"个EPML文件");
 
             this.generateComplexNode();
         } catch (DocumentException e) {
@@ -75,7 +75,6 @@ public class EPCParser {
     }
 
     private void generateComplexNode() {//生成复杂节点
-        System.out.println("生成复杂节点...");
         for(int i=0;i<ruleArr.size();i++){
             String id=ruleArr.get(i).getId();
             ComplexNode p=new ComplexNode();
@@ -98,7 +97,6 @@ public class EPCParser {
             cmpNodes.add(p);
         }
     }
-
 
     public static void main(String[] args) {
     }

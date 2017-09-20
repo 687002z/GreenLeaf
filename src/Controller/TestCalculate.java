@@ -34,11 +34,11 @@ public class TestCalculate {
         cmpNode.setEventOut(out);
         cmpNode.setRule(rule);
 
-        String addrName1= PubSubNode.getInstance().getWebAdd()+"test1";
+        String addrName1= PubSubNode.getInstance().getpreWebAdd()+"test1";
         System.out.println(addrName1);
         Endpoint.publish(addrName1,new NotificationProcessImpl(cmpNode, ComplexEventCal.getInstance(),e1));//发布服务
 
-        String addrName2= PubSubNode.getInstance().getWebAdd()+"test2";
+        String addrName2= PubSubNode.getInstance().getpreWebAdd()+"test2";
         System.out.println(addrName2);
         Endpoint.publish(addrName2,new NotificationProcessImpl(cmpNode, ComplexEventCal.getInstance(),e1));//发布服务
 

@@ -1,14 +1,14 @@
 package Controller.tab;
 
+import Controller.ComplexEventCal;
 import Controller.Db.ConnDB;
 import Controller.Parse.BufferedImageTranscoder;
+import Controller.Parse.EPCParser;
+import Controller.Parse.SVGModelParser;
 import Model.*;
+import Model.Node.*;
 import Model.Node.EPCNode.Func;
 import Model.Node.Process;
-import Model.Node.ProcessModel;
-import Model.Node.Task;
-import Model.Node.TaskModel;
-import Model.Node.INode;
 import Model.Node.TreeNode.TypeNode;
 import Model.Dialog.Dialogs;
 import javafx.beans.value.ChangeListener;
@@ -35,8 +35,10 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 /**
@@ -130,9 +132,7 @@ public class TaskManageTab extends Tab {
             }else{
                 wait.getChildren().add(new TreeItem<>(a));
             }
-
         }
-
         this.addTaskTreeListenner();
     }
     /*
@@ -192,7 +192,7 @@ public class TaskManageTab extends Tab {
                     hb.getChildren().add(label);
                     TextField tf =new TextField();
                     hb.getChildren().add(tf);
-                    if(values[2].equals("r")&&values.length<=4){
+                    if(values[2].equals("r")&&values.length>=4){
                         tf.setEditable(false);
                         tf.setText(values[3]);
                     }
@@ -203,7 +203,7 @@ public class TaskManageTab extends Tab {
 
                     DatePicker dp=new DatePicker();
                     hb.getChildren().add(dp);
-                    if(values[2].equals("r")&&values.length<=4){
+                    if(values[2].equals("r")&&values.length>=4){
                         dp.setEditable(false);
                         String date[]=values[3].split("-");
                         dp.setValue(LocalDate.of(Integer.valueOf(date[0]),Integer.valueOf(date[1]),Integer.valueOf(date[2])));
@@ -221,7 +221,6 @@ public class TaskManageTab extends Tab {
     /*
     *   初始化显示流程模型列表，从数据库中读取数据
      */
-
     public void initProcessModelList(){
         String sql="select * from process_model";
         ResultSet res=ConnDB.getInstance().executeQuery(sql,ConnDB.getInstance().getConn());
@@ -288,11 +287,10 @@ public class TaskManageTab extends Tab {
 
             }
             if(p!=null){
-//                this.createTask(p);
+                //创建任务实例,自动生成发起人和发起时间
+                createTask(p);
             }
-
         }
-
     }
     /*
     * 存储任务编辑后的信息并发送信息到到主题,任务信息需要从@Value taskDataMap 与控件中的value进行合并。
@@ -314,7 +312,6 @@ public class TaskManageTab extends Tab {
                 }
             }
         }catch (Exception e) {
-//            e.printStackTrace();
             Dialogs.getInstance().showMessageDialog(new Stage(),"填写内容出错！","错误");
         }
 
@@ -322,17 +319,24 @@ public class TaskManageTab extends Tab {
             System.out.println(s+":"+taskDataMap.get(s));
         }
 
+        //TODO
+        //向发布订阅系统发布任务消息
+        int statusCode = PubSubNode.getInstance().postMessage("Test2","test");
+        System.out.println("Status Code:"+statusCode);
+
+
+
     }
-    /*
-        点击 新建流程 标签触发的回调函数，会显示webView
+    /**
+     * 点击 新建流程 标签触发的回调函数，会显示webView
      */
     @FXML
     void showProcessScroll(){
         processModelStackPane.setVisible(true);
         taskScrollView.setVisible(false);
     }
-    /*
-        点击 任务处理 标签触发的回调函数，会显示任务信息内容
+    /**
+     * 点击 任务处理 标签触发的回调函数，会显示任务信息内容
      */
     @FXML
     void showTaskScroll(){
@@ -343,7 +347,7 @@ public class TaskManageTab extends Tab {
     * 从流程模型表中选择需要创建的流程模型，创建流程实例，写入数据库
      */
     private Process createProcess(String name){
-
+        //开启的流程实例注册到数据库中
         String sql="insert into process(Name,ModelId,Status,UserId,Finished_func,Finished_event) values ('"+name+"','"+selectedProcessModelNode.getId()+"','"
                 +1+"','"+Login.getInstance().getUsername()+"','','')";//插入流程实例记录到数据库中
         ConnDB.getInstance().executeUpdate(sql);
@@ -358,10 +362,24 @@ public class TaskManageTab extends Tab {
             e.printStackTrace();
         }
 
-        //创建进程实例节点，放入集合中用以维护
+        //创建进程节点实例，放入集合中用以维护
         Process p = new Process(id,name,selectedProcessModelNode.getId(),1,Login.getInstance().getUsername(),"","");
+
+        //生成流程实例对应的EPC解析对象
+        EPCParser epc=new EPCParser();
+        epc.read(this.getProcessModelMap().get(p.getModelId()).getModelData());//通过流程模型Map获取modeldata
+        p.setEpc(epc);
+        //生成流程实例对应的SVG解析对象
+        SVGModelParser svg = new SVGModelParser();
+        svg.read(this.getProcessModelMap().get(p.getModelId()).getGraphData());
+        p.setSvg(svg);
+
         ProcessManageTab.getProcessList().put(p.getId(),p);
 
+        //开启复杂事件计算
+        this.startComplexEventService(p);
+
+        //发送起始事件
         sendStartEvent();
 
         return p;
@@ -373,23 +391,54 @@ public class TaskManageTab extends Tab {
     private void createTask(Process p){
         HashMap<String,Func> funcs=p.getEpc().getFuncs();
         for(Func f:funcs.values()){
-            System.out.println(f.getTaskModelId());
+            System.out.println("ModelId"+f.getTaskModelId());
+
+            //任务模型数据获取
+            String taskData = "";
+            String sql="select Domins from task_model where TaskModelId = '"+f.getTaskModelId()+"'";
+            ConnDB conn= ConnDB.getInstance();
+            Connection connection=conn.getConn();
+            ResultSet res=conn.executeQuery(sql,connection);
+            try {
+                while(res.next()){
+                    taskData = res.getString("Domins");
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            //拼接发起人和发布时间
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            String startDate = "发起时间:text:r:"+sdf.format(new Date())+";";
+            String startPerson = "发起人:text:r:"+p.getUserid()+";"+startDate;
+            taskData = startPerson + taskData;
+
+            //任务实例入库
+            sql="insert into task(TaskModelId,ProcessId,Data,UserId,status) values ('"+f.getTaskModelId()+
+                    "','"+p.getId()+"',N'" +taskData+"','"+p.getUserid()+"','"+1+"')";//插入流程实例记录到数据库中
+            ConnDB.getInstance().executeUpdate(sql);
+
+            this.initTaskList();
+
         }
-
-
     }
+
     /*
     *发送起始事件
      */
     private void sendStartEvent(){
-
+        System.out.println("发送起始事件开启流程！");
+        //向发布订阅系统发布起始消息
+        int statusCode = PubSubNode.getInstance().postMessage("start","@start@");
+        System.out.println("Status Code:"+statusCode);
     }
+
     /*
     *开启复杂事件计算服务
      */
-    private void startComplexEventService(){
+    private void startComplexEventService(Process p){
         System.out.println("准备开启复杂事件计算服务。");
-
+        ComplexEventCal.getInstance().publishAndSubscribe(p.getEpc());
     }
     /*
     *右键菜单的刷新回调函数
@@ -401,5 +450,11 @@ public class TaskManageTab extends Tab {
 
     public static HashMap<Integer, ProcessModel> getProcessModelMap() {
         return processModelMap;
+    }
+
+    //test Main
+    public static void main(String[] args) {
+        TaskManageTab t = new TaskManageTab();
+
     }
 }

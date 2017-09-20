@@ -88,14 +88,14 @@ public class ComplexEventCal {
                 Event e1=cmpNodes.get(i).getEventIn1();
                 Event e2=cmpNodes.get(i).getEventIn2();
                 String name1=e1.getTheme()+e1.getEventName();
-                String addrName1= PubSubNode.getInstance().getWebAdd()+servicesName+"/"+name1;
+                String addrName1= PubSubNode.getInstance().getpreWebAdd()+servicesName+"/"+name1;
                 Endpoint.publish(addrName1,new NotificationProcessImpl(cmpNodes.get(i), ComplexEventCal.getInstance(),e1));//发布服务
                 System.out.println("发布服务"+addrName1);
                 String res=PubSubNode.getInstance().subcribe(addrName1,e1.getTheme());//订阅e1主题
                 System.out.println("订阅"+e1.getTheme()+":"+res);
 
                 String name2=e2.getTheme()+e2.getEventName();
-                String addrName2=PubSubNode.getInstance().getWebAdd()+servicesName+"/"+name2;
+                String addrName2=PubSubNode.getInstance().getpreWebAdd()+servicesName+"/"+name2;
                 Endpoint.publish(addrName2,new NotificationProcessImpl(cmpNodes.get(i), ComplexEventCal.getInstance(),e2));//发布服务
                 System.out.println("发布服务"+addrName2);
                 res=PubSubNode.getInstance().subcribe(addrName2,e2.getTheme());//订阅e2主题
